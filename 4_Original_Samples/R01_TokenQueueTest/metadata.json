@@ -1,0 +1,61 @@
+{
+  "id": "benchmark-1|llm|Defects4J|Jsoup-60|GPT3|ZEROSHOT|NA|3|c91074571f65",
+  "benchmark": "benchmark-1",
+  "dataset": "Defects4J",
+  "unit_id": "Jsoup-60",
+  "project": "Jsoup",
+  "bug_id": "60",
+  "sf110_subject": "",
+  "sf110_class": "",
+  "generator_family": "llm",
+  "generator_model": "GPT3",
+  "generator_prompt": "ZEROSHOT",
+  "run_index": "",
+  "sample_id": "3",
+  "test_sha1": "c91074571f65d2d5edda43e6f79d656f575adffb",
+  "production_sha1": "4148d1b6c3476ae00eb876bce191243601ad8a27",
+  "source_csv": "Output_TestSmellDetection_GPT3-Defects4j.csv",
+  "row_index": "1147",
+  "missing_test": "0",
+  "missing_production": "0",
+  "reference_AR": 23,
+  "reference_LT": 21,
+  "reference_test_class": "TokenQueueTest.java",
+  "pool_key": "P010",
+  "test_fqn": "org.jsoup.parser.TokenQueueTest",
+  "production_fqn": "org.jsoup.parser.TokenQueue",
+  "test_file": "validated_samples/R01_TokenQueueTest/test/org/jsoup/parser/TokenQueueTest.java",
+  "production_file": "validated_samples/R01_TokenQueueTest/production/org/jsoup/parser/TokenQueue.java",
+  "test_code_LOC": 172,
+  "generator": {
+    "family": "llm",
+    "model": "GPT3",
+    "prompt": "ZEROSHOT"
+  },
+  "code_sha1": {
+    "test": "c91074571f65d2d5edda43e6f79d656f575adffb",
+    "production": "4148d1b6c3476ae00eb876bce191243601ad8a27"
+  },
+  "validation_key": "P010",
+  "test_counts": {
+    "tests": 25,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "AR_local": 23,
+  "LT_local": 21,
+  "sample": "R01",
+  "replaces_original_slot": "D01",
+  "replacement_reason": "Original EvoSuite generation-specific scaffolding unavailable; unmodified GPT-3.5/Defects4J record passed source-pair compilation and all tests",
+  "active_dependency_jars": [
+    "junit-4.13.2.jar",
+    "hamcrest-core-1.3.jar",
+    "junit-platform-console-standalone-1.9.3.jar",
+    "jsoup-1.8.3.jar"
+  ],
+  "original_sources_modified": false,
+  "scaffolding_required": false,
+  "test_success_requires_zero_skips": true,
+  "runtime_scope": "Archived production source compiled with pinned supporting library JARs; not a complete Defects4J checkout build"
+}

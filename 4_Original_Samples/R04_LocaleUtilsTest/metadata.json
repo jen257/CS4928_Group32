@@ -1,0 +1,61 @@
+{
+  "id": "benchmark-1|llm|Defects4J|Lang-5|GPT3|ZEROSHOT|NA|20|15969c9a6e7f",
+  "benchmark": "benchmark-1",
+  "dataset": "Defects4J",
+  "unit_id": "Lang-5",
+  "project": "Lang",
+  "bug_id": "5",
+  "sf110_subject": "",
+  "sf110_class": "",
+  "generator_family": "llm",
+  "generator_model": "GPT3",
+  "generator_prompt": "ZEROSHOT",
+  "run_index": "",
+  "sample_id": "20",
+  "test_sha1": "15969c9a6e7f57be128ca1e175ec98aab6af7103",
+  "production_sha1": "ab123de98c6380f727f338b6443dcba11f12715b",
+  "source_csv": "Output_TestSmellDetection_GPT3-Defects4j.csv",
+  "row_index": "1427",
+  "missing_test": "0",
+  "missing_production": "0",
+  "reference_AR": 11,
+  "reference_LT": 11,
+  "reference_test_class": "LocaleUtilsTest.java",
+  "pool_key": "P082",
+  "test_fqn": "org.apache.commons.lang3.LocaleUtilsTest",
+  "production_fqn": "org.apache.commons.lang3.LocaleUtils",
+  "test_file": "validated_samples/R04_LocaleUtilsTest/test/org/apache/commons/lang3/LocaleUtilsTest.java",
+  "production_file": "validated_samples/R04_LocaleUtilsTest/production/org/apache/commons/lang3/LocaleUtils.java",
+  "test_code_LOC": 96,
+  "generator": {
+    "family": "llm",
+    "model": "GPT3",
+    "prompt": "ZEROSHOT"
+  },
+  "code_sha1": {
+    "test": "15969c9a6e7f57be128ca1e175ec98aab6af7103",
+    "production": "ab123de98c6380f727f338b6443dcba11f12715b"
+  },
+  "validation_key": "P082",
+  "test_counts": {
+    "tests": 12,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "AR_local": 11,
+  "LT_local": 11,
+  "sample": "R04",
+  "replaces_original_slot": "D04",
+  "replacement_reason": "Original EvoSuite generation-specific scaffolding unavailable; unmodified GPT-3.5/Defects4J record passed source-pair compilation and all tests",
+  "active_dependency_jars": [
+    "junit-4.13.2.jar",
+    "hamcrest-core-1.3.jar",
+    "junit-platform-console-standalone-1.9.3.jar",
+    "commons-lang3-3.5.jar"
+  ],
+  "original_sources_modified": false,
+  "scaffolding_required": false,
+  "test_success_requires_zero_skips": true,
+  "runtime_scope": "Archived production source compiled with pinned supporting library JARs; not a complete Defects4J checkout build"
+}

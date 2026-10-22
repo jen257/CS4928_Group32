@@ -1,0 +1,61 @@
+{
+  "id": "benchmark-1|llm|Defects4J|Collections-26|GPT3|COT|NA|5|7ae0088ec995",
+  "benchmark": "benchmark-1",
+  "dataset": "Defects4J",
+  "unit_id": "Collections-26",
+  "project": "Collections",
+  "bug_id": "26",
+  "sf110_subject": "",
+  "sf110_class": "",
+  "generator_family": "llm",
+  "generator_model": "GPT3",
+  "generator_prompt": "COT",
+  "run_index": "",
+  "sample_id": "5",
+  "test_sha1": "7ae0088ec99570512ecdf408a4b4c0e895e375fc",
+  "production_sha1": "18a78524b42eeef7799f5eca5e94a77c4639abc3",
+  "source_csv": "Output_TestSmellDetection_GPT3-Defects4j.csv",
+  "row_index": "2263",
+  "missing_test": "0",
+  "missing_production": "0",
+  "reference_AR": 9,
+  "reference_LT": 27,
+  "reference_test_class": "MultiKeyTest.java",
+  "pool_key": "P099",
+  "test_fqn": "org.apache.commons.collections4.keyvalue.MultiKeyTest",
+  "production_fqn": "org.apache.commons.collections4.keyvalue.MultiKey",
+  "test_file": "validated_samples/R07_MultiKeyTest/test/org/apache/commons/collections4/keyvalue/MultiKeyTest.java",
+  "production_file": "validated_samples/R07_MultiKeyTest/production/org/apache/commons/collections4/keyvalue/MultiKey.java",
+  "test_code_LOC": 131,
+  "generator": {
+    "family": "llm",
+    "model": "GPT3",
+    "prompt": "COT"
+  },
+  "code_sha1": {
+    "test": "7ae0088ec99570512ecdf408a4b4c0e895e375fc",
+    "production": "18a78524b42eeef7799f5eca5e94a77c4639abc3"
+  },
+  "validation_key": "P099",
+  "test_counts": {
+    "tests": 16,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "AR_local": 9,
+  "LT_local": 27,
+  "sample": "R07",
+  "replaces_original_slot": "D07",
+  "replacement_reason": "Original EvoSuite generation-specific scaffolding unavailable; unmodified GPT-3.5/Defects4J record passed source-pair compilation and all tests",
+  "active_dependency_jars": [
+    "junit-4.13.2.jar",
+    "hamcrest-core-1.3.jar",
+    "junit-platform-console-standalone-1.9.3.jar",
+    "commons-collections4-4.1.jar"
+  ],
+  "original_sources_modified": false,
+  "scaffolding_required": false,
+  "test_success_requires_zero_skips": true,
+  "runtime_scope": "Archived production source compiled with pinned supporting library JARs; not a complete Defects4J checkout build"
+}
