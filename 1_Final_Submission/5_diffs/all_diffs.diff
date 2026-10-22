@@ -1,0 +1,2060 @@
+--- a/R01_TokenQueueTest\test\org\jsoup\parser\TokenQueueTest.java
++++ b/R01_TokenQueueTest\test\org\jsoup\parser\TokenQueueTest.java
+@@ -7,202 +7,154 @@
+     @Test
+     public void testIsEmpty() {
+         TokenQueue tq = new TokenQueue("");
+-        assertTrue(tq.isEmpty());
++        assertTrue("Expected empty TokenQueue to return true for isEmpty()", tq.isEmpty());
+ 
+         tq = new TokenQueue("abcdef");
+-        assertFalse(tq.isEmpty());
++        assertFalse("Expected non-empty TokenQueue to return false for isEmpty()", tq.isEmpty());
+     }
+ 
+     @Test
+-    public void testPeek() {
++    public void testPeekAdvanceAndConsume() {
+         TokenQueue tq = new TokenQueue("abcdef");
+-        assertEquals('a', tq.peek());
++        assertEquals("Expected peek() to return first character 'a'", 'a', tq.peek());
+ 
+         tq = new TokenQueue("");
+-        assertEquals(0, tq.peek());
++        assertEquals("Expected peek() on empty queue to return 0", 0, tq.peek());
++
++        tq = new TokenQueue("abc");
++        tq.advance();
++        assertEquals("Expected peek() after advance() to return 'b'", 'b', tq.peek());
++
++        tq = new TokenQueue("");
++        tq.advance();
++        assertEquals("Expected peek() after advance() on empty queue to return 0", 0, tq.peek());
++
++        tq = new TokenQueue("abc");
++        assertEquals("Expected consume() to return first character 'a'", 'a', tq.consume());
++        assertEquals("Expected peek() after consume() to return 'b'", 'b', tq.peek());
+     }
+ 
+     @Test
+-    public void testAddFirst() {
++    public void testToStringOperations() {
+         TokenQueue tq = new TokenQueue("world");
+         tq.addFirst("hello ");
+-        assertEquals("hello world", tq.toString());
++        assertEquals("Expected queue to contain prepended string after addFirst()", "hello world", tq.toString());
++
++        tq = new TokenQueue("abcxyz");
++        assertTrue("Expected matchChomp('abc') to succeed and return true", tq.matchChomp("abc"));
++        assertEquals("Expected remaining queue to be 'xyz' after matching matchChomp()", "xyz", tq.toString());
++
++        tq = new TokenQueue("abcxyz");
++        assertFalse("Expected matchChomp('xyz') at non-matching prefix to return false", tq.matchChomp("xyz"));
++        assertEquals("Expected queue to remain unchanged after failed matchChomp()", "abcxyz", tq.toString());
++
++        tq = new TokenQueue("abcxyz");
++        assertEquals("Expected consumeTo('x') to return substring before 'x'", "abc", tq.consumeTo("x"));
++        assertEquals("Expected remaining queue to start at 'x' after consumeTo()", "xyz", tq.toString());
++
++        tq = new TokenQueue("abcXYZ");
++        assertEquals("Expected consumeToIgnoreCase('X') to return 'abc'", "abc", tq.consumeToIgnoreCase("X"));
++        assertEquals("Expected remaining queue to be 'XYZ' after consumeToIgnoreCase()", "XYZ", tq.toString());
++
++        tq = new TokenQueue("abcxyz");
++        assertEquals("Expected consumeToAny('x', '123') to return 'abc'", "abc", tq.consumeToAny("x", "123"));
++        assertEquals("Expected remaining queue to be 'xyz' after consumeToAny()", "xyz", tq.toString());
++
++        tq = new TokenQueue("abcxyz");
++        assertEquals("Expected chompTo('x') to return substring before 'x'", "abc", tq.chompTo("x"));
++        assertEquals("Expected remaining queue to exclude 'x' after chompTo()", "yz", tq.toString());
++
++        tq = new TokenQueue("abcXYZ");
++        assertEquals("Expected chompToIgnoreCase('X') to return 'abc'", "abc", tq.chompToIgnoreCase("X"));
++        assertEquals("Expected remaining queue to exclude 'X' after chompToIgnoreCase()", "YZ", tq.toString());
++
++        tq = new TokenQueue("(one (two) three) four");
++        assertEquals("Expected chompBalanced('(', ')') to return balanced inner content", "one (two) three", tq.chompBalanced('(', ')'));
++        assertEquals("Expected remaining queue after chompBalanced() to be ' four'", " four", tq.toString());
++
++        tq = new TokenQueue("   abc");
++        assertTrue("Expected consumeWhitespace() to return true when leading whitespace is present", tq.consumeWhitespace());
++        assertEquals("Expected remaining queue after consumeWhitespace() to be 'abc'", "abc", tq.toString());
++
++        tq = new TokenQueue("abc_123");
++        assertEquals("Expected consumeWord() to return leading word characters 'abc'", "abc", tq.consumeWord());
++        assertEquals("Expected remaining queue after consumeWord() to be '_123'", "_123", tq.toString());
++
++        tq = new TokenQueue("div3_5");
++        assertEquals("Expected consumeTagName() to consume full tag name 'div3_5'", "div3_5", tq.consumeTagName());
++        assertEquals("Expected queue to be empty after consumeTagName()", "", tq.toString());
++
++        tq = new TokenQueue("div3_5");
++        assertEquals("Expected consumeElementSelector() to consume 'div3_5'", "div3_5", tq.consumeElementSelector());
++        assertEquals("Expected queue to be empty after consumeElementSelector()", "", tq.toString());
++
++        tq = new TokenQueue("abc-123");
++        assertEquals("Expected consumeCssIdentifier() to consume 'abc-123'", "abc-123", tq.consumeCssIdentifier());
++        assertEquals("Expected queue to be empty after consumeCssIdentifier()", "", tq.toString());
++
++        tq = new TokenQueue("data-jsoup=\"true\"");
++        assertEquals("Expected consumeAttributeKey() to return 'data-jsoup'", "data-jsoup", tq.consumeAttributeKey());
++        assertEquals("Expected remaining queue after consumeAttributeKey() to be '=\"true\"'", "=\"true\"", tq.toString());
++
++        tq = new TokenQueue("abc");
++        assertEquals("Expected remainder() to return all remaining characters 'abc'", "abc", tq.remainder());
++        assertEquals("Expected queue to be empty after remainder()", "", tq.toString());
+     }
+ 
+     @Test
+     public void testMatches() {
+         TokenQueue tq = new TokenQueue("abcxyz");
+-        assertTrue(tq.matches("abc"));
+-        assertFalse(tq.matches("123"));
++        assertTrue("Expected matches('abc') to return true for matching prefix", tq.matches("abc"));
++        assertFalse("Expected matches('123') to return false for non-matching prefix", tq.matches("123"));
+ 
+         tq = new TokenQueue("");
+-        assertFalse(tq.matches("abc"));
++        assertFalse("Expected matches('abc') on empty queue to return false", tq.matches("abc"));
+     }
+ 
+     @Test
+     public void testMatchesCS() {
+         TokenQueue tq = new TokenQueue("abcxyz");
+-        assertTrue(tq.matchesCS("abc"));
+-        assertFalse(tq.matchesCS("ABC"));
++        assertTrue("Expected case-sensitive matchesCS('abc') to return true", tq.matchesCS("abc"));
++        assertFalse("Expected case-sensitive matchesCS('ABC') to return false", tq.matchesCS("ABC"));
+ 
+         tq = new TokenQueue("");
+-        assertFalse(tq.matchesCS("abc"));
++        assertFalse("Expected matchesCS('abc') on empty queue to return false", tq.matchesCS("abc"));
+     }
+ 
+     @Test
+     public void testMatchesAny() {
+         TokenQueue tq = new TokenQueue("abcxyz");
+-        assertTrue(tq.matchesAny("abc", "123"));
+-        assertFalse(tq.matchesAny("def", "123"));
++        assertTrue("Expected matchesAny('abc', '123') to return true when one sequence matches", tq.matchesAny("abc", "123"));
++        assertFalse("Expected matchesAny('def', '123') to return false when no sequence matches", tq.matchesAny("def", "123"));
+ 
+         tq = new TokenQueue("");
+-        assertFalse(tq.matchesAny("abc", "123"));
+-    }
+-
+-    @Test
+-    public void testMatchChomp() {
+-        TokenQueue tq = new TokenQueue("abcxyz");
+-        assertTrue(tq.matchChomp("abc"));
+-        assertEquals("xyz", tq.toString());
+-
+-        tq = new TokenQueue("abcxyz");
+-        assertFalse(tq.matchChomp("xyz"));
+-        assertEquals("abcxyz", tq.toString());
++        assertFalse("Expected matchesAny('abc', '123') on empty queue to return false", tq.matchesAny("abc", "123"));
+     }
+ 
+     @Test
+     public void testMatchesWhitespace() {
+         TokenQueue tq = new TokenQueue(" abc xyz");
+-        assertTrue(tq.matchesWhitespace());
++        assertTrue("Expected matchesWhitespace() to return true for leading space", tq.matchesWhitespace());
+ 
+         tq = new TokenQueue("abcxyz");
+-        assertFalse(tq.matchesWhitespace());
++        assertFalse("Expected matchesWhitespace() to return false for leading letter", tq.matchesWhitespace());
+     }
+ 
+     @Test
+     public void testMatchesWord() {
+         TokenQueue tq = new TokenQueue("abcxyz");
+-        assertTrue(tq.matchesWord());
++        assertTrue("Expected matchesWord() to return true for leading letter", tq.matchesWord());
+ 
+         tq = new TokenQueue("123xyz");
+-        assertTrue(tq.matchesWord());
++        assertTrue("Expected matchesWord() to return true for leading digit", tq.matchesWord());
+ 
+         tq = new TokenQueue("-xyz");
+-        assertFalse(tq.matchesWord());
+-    }
+-
+-    @Test
+-    public void testAdvance() {
+-        TokenQueue tq = new TokenQueue("abc");
+-        tq.advance();
+-        assertEquals('b', tq.peek());
+-
+-        tq = new TokenQueue("");
+-        tq.advance();
+-        assertEquals(0, tq.peek());
+-    }
+-
+-    @Test
+-    public void testConsume() {
+-        TokenQueue tq = new TokenQueue("abc");
+-        assertEquals('a', tq.consume());
+-        assertEquals('b', tq.peek());
+-    }
+-
+-    @Test
+-    public void testConsumeTo() {
+-        TokenQueue tq = new TokenQueue("abcxyz");
+-        assertEquals("abc", tq.consumeTo("x"));
+-        assertEquals("xyz", tq.toString());
+-    }
+-    
+-    @Test
+-    public void testConsumeToIgnoreCase() {
+-        TokenQueue tq = new TokenQueue("abcXYZ");
+-        assertEquals("abc", tq.consumeToIgnoreCase("X"));
+-        assertEquals("XYZ", tq.toString());
+-    }
+-
+-    @Test
+-    public void testConsumeToAny() {
+-        TokenQueue tq = new TokenQueue("abcxyz");
+-        assertEquals("abc", tq.consumeToAny("x", "123"));
+-        assertEquals("xyz", tq.toString());
+-    }
+-
+-    @Test
+-    public void testChompTo() {
+-        TokenQueue tq = new TokenQueue("abcxyz");
+-        assertEquals("abc", tq.chompTo("x"));
+-        assertEquals("yz", tq.toString());
+-    }
+-    
+-    @Test
+-    public void testChompToIgnoreCase() {
+-        TokenQueue tq = new TokenQueue("abcXYZ");
+-        assertEquals("abc", tq.chompToIgnoreCase("X"));
+-        assertEquals("YZ", tq.toString());
+-    }
+-
+-    @Test
+-    public void testChompBalanced() {
+-        TokenQueue tq = new TokenQueue("(one (two) three) four");
+-        assertEquals("one (two) three", tq.chompBalanced('(', ')'));
+-        assertEquals(" four", tq.toString());
++        assertFalse("Expected matchesWord() to return false for leading hyphen", tq.matchesWord());
+     }
+ 
+     @Test
+     public void testUnescape() {
+         String s = TokenQueue.unescape("hello\\\"world\\\"");
+-        assertEquals("hello\"world\"", s);
+-    }
+-
+-    @Test
+-    public void testConsumeWhitespace() {
+-        TokenQueue tq = new TokenQueue("   abc");
+-        assertTrue(tq.consumeWhitespace());
+-        assertEquals("abc", tq.toString());
+-    }
+-
+-    @Test
+-    public void testConsumeWord() {
+-        TokenQueue tq = new TokenQueue("abc_123");
+-        assertEquals("abc", tq.consumeWord());
+-        assertEquals("_123", tq.toString());
+-    }
+-    
+-    @Test
+-    public void testConsumeTagName() {
+-        TokenQueue tq = new TokenQueue("div3_5");
+-        assertEquals("div3_5", tq.consumeTagName());
+-        assertEquals("", tq.toString());
+-    }
+-    
+-    @Test
+-    public void testConsumeElementSelector() {
+-        TokenQueue tq = new TokenQueue("div3_5");
+-        assertEquals("div3_5", tq.consumeElementSelector());
+-        assertEquals("", tq.toString());
+-    }
+-
+-    @Test
+-    public void testConsumeCssIdentifier() {
+-        TokenQueue tq = new TokenQueue("abc-123");
+-        assertEquals("abc-123", tq.consumeCssIdentifier());
+-        assertEquals("", tq.toString());
+-    }
+-
+-    @Test
+-    public void testConsumeAttributeKey() {
+-        TokenQueue tq = new TokenQueue("data-jsoup=\"true\"");
+-        assertEquals("data-jsoup", tq.consumeAttributeKey());
+-        assertEquals("=\"true\"", tq.toString());
+-    }
+-
+-    @Test
+-    public void testRemainder() {
+-        TokenQueue tq = new TokenQueue("abc");
+-        assertEquals("abc", tq.remainder());
+-        assertEquals("", tq.toString());
++        assertEquals("Expected unescape() to strip backslash escapes from quotes", "hello\"world\"", s);
+     }
+ }
+
+--- a/R02_UnsupportedDurationFieldTest\test\org\joda\time\field\UnsupportedDurationFieldTest.java
++++ b/R02_UnsupportedDurationFieldTest\test\org\joda\time\field\UnsupportedDurationFieldTest.java
+@@ -11,192 +11,132 @@
+ public class UnsupportedDurationFieldTest {
+ 
+     @Test
+-    public void testGetType() {
++    public void testUnsupportedDurationField() {
+         UnsupportedDurationField field = UnsupportedDurationField.getInstance(DurationFieldType.millis());
+-        assertEquals(DurationFieldType.millis(), field.getType());
+-    }
++        assertEquals("Expected getType() to return millis DurationFieldType", DurationFieldType.millis(), field.getType());
+ 
+-    @Test
+-    public void testGetName() {
+-        UnsupportedDurationField field = UnsupportedDurationField.getInstance(DurationFieldType.millis());
+-        assertEquals("millis", field.getName());
+-    }
++        field = UnsupportedDurationField.getInstance(DurationFieldType.millis());
++        assertEquals("Expected getName() to return 'millis'", "millis", field.getName());
+ 
+-    @Test
+-    public void testIsSupported() {
+-        UnsupportedDurationField field = UnsupportedDurationField.getInstance(DurationFieldType.millis());
+-        assertFalse(field.isSupported());
+-    }
++        field = UnsupportedDurationField.getInstance(DurationFieldType.millis());
++        assertFalse("Expected isSupported() to return false", field.isSupported());
+ 
+-    @Test
+-    public void testIsPrecise() {
+-        UnsupportedDurationField field = UnsupportedDurationField.getInstance(DurationFieldType.millis());
+-        assertTrue(field.isPrecise());
+-    }
++        field = UnsupportedDurationField.getInstance(DurationFieldType.millis());
++        assertTrue("Expected isPrecise() to return true", field.isPrecise());
+ 
+-    @Test
+-    public void testGetValue_long() {
+-        UnsupportedDurationField field = UnsupportedDurationField.getInstance(DurationFieldType.millis());
++        field = UnsupportedDurationField.getInstance(DurationFieldType.millis());
+         try {
+             field.getValue(1000);
+             fail("Expected UnsupportedOperationException");
+         } catch (UnsupportedOperationException e) {
+-            assertEquals("millis field is unsupported", e.getMessage());
++            assertEquals("Expected unsupported message for getValue(long)", "millis field is unsupported", e.getMessage());
+         }
+-    }
+ 
+-    @Test
+-    public void testGetValueAsLong_long() {
+-        UnsupportedDurationField field = UnsupportedDurationField.getInstance(DurationFieldType.millis());
++        field = UnsupportedDurationField.getInstance(DurationFieldType.millis());
+         try {
+             field.getValueAsLong(1000);
+             fail("Expected UnsupportedOperationException");
+         } catch (UnsupportedOperationException e) {
+-            assertEquals("millis field is unsupported", e.getMessage());
++            assertEquals("Expected unsupported message for getValueAsLong(long)", "millis field is unsupported", e.getMessage());
+         }
+-    }
+ 
+-    @Test
+-    public void testGetValue_long_long() {
+-        UnsupportedDurationField field = UnsupportedDurationField.getInstance(DurationFieldType.millis());
++        field = UnsupportedDurationField.getInstance(DurationFieldType.millis());
+         try {
+             field.getValue(1000, 2000);
+             fail("Expected UnsupportedOperationException");
+         } catch (UnsupportedOperationException e) {
+-            assertEquals("millis field is unsupported", e.getMessage());
++            assertEquals("Expected unsupported message for getValue(long, long)", "millis field is unsupported", e.getMessage());
+         }
+-    }
+ 
+-    @Test
+-    public void testGetValueAsLong_long_long() {
+-        UnsupportedDurationField field = UnsupportedDurationField.getInstance(DurationFieldType.millis());
++        field = UnsupportedDurationField.getInstance(DurationFieldType.millis());
+         try {
+             field.getValueAsLong(1000, 2000);
+             fail("Expected UnsupportedOperationException");
+         } catch (UnsupportedOperationException e) {
+-            assertEquals("millis field is unsupported", e.getMessage());
++            assertEquals("Expected unsupported message for getValueAsLong(long, long)", "millis field is unsupported", e.getMessage());
+         }
+-    }
+ 
+-    @Test
+-    public void testGetMillis_int() {
+-        UnsupportedDurationField field = UnsupportedDurationField.getInstance(DurationFieldType.millis());
++        field = UnsupportedDurationField.getInstance(DurationFieldType.millis());
+         try {
+             field.getMillis(1);
+             fail("Expected UnsupportedOperationException");
+         } catch (UnsupportedOperationException e) {
+-            assertEquals("millis field is unsupported", e.getMessage());
++            assertEquals("Expected unsupported message for getMillis(int)", "millis field is unsupported", e.getMessage());
+         }
+-    }
+ 
+-    @Test
+-    public void testGetMillis_long() {
+-        UnsupportedDurationField field = UnsupportedDurationField.getInstance(DurationFieldType.millis());
++        field = UnsupportedDurationField.getInstance(DurationFieldType.millis());
+         try {
+             field.getMillis(1000L);
+             fail("Expected UnsupportedOperationException");
+         } catch (UnsupportedOperationException e) {
+-            assertEquals("millis field is unsupported", e.getMessage());
++            assertEquals("Expected unsupported message for getMillis(long)", "millis field is unsupported", e.getMessage());
+         }
+-    }
+ 
+-    @Test
+-    public void testGetMillis_int_long() {
+-        UnsupportedDurationField field = UnsupportedDurationField.getInstance(DurationFieldType.millis());
++        field = UnsupportedDurationField.getInstance(DurationFieldType.millis());
+         try {
+             field.getMillis(1, 2000L);
+             fail("Expected UnsupportedOperationException");
+         } catch (UnsupportedOperationException e) {
+-            assertEquals("millis field is unsupported", e.getMessage());
++            assertEquals("Expected unsupported message for getMillis(int, long)", "millis field is unsupported", e.getMessage());
+         }
+-    }
+ 
+-    @Test
+-    public void testGetMillis_long_long() {
+-        UnsupportedDurationField field = UnsupportedDurationField.getInstance(DurationFieldType.millis());
++        field = UnsupportedDurationField.getInstance(DurationFieldType.millis());
+         try {
+             field.getMillis(1000L, 2000L);
+             fail("Expected UnsupportedOperationException");
+         } catch (UnsupportedOperationException e) {
+-            assertEquals("millis field is unsupported", e.getMessage());
++            assertEquals("Expected unsupported message for getMillis(long, long)", "millis field is unsupported", e.getMessage());
+         }
+-    }
+ 
+-    @Test
+-    public void testAdd_long_int() {
+-        UnsupportedDurationField field = UnsupportedDurationField.getInstance(DurationFieldType.millis());
++        field = UnsupportedDurationField.getInstance(DurationFieldType.millis());
+         try {
+             field.add(1000L, 1);
+             fail("Expected UnsupportedOperationException");
+         } catch (UnsupportedOperationException e) {
+-            assertEquals("millis field is unsupported", e.getMessage());
++            assertEquals("Expected unsupported message for add(long, int)", "millis field is unsupported", e.getMessage());
+         }
+-    }
+ 
+-    @Test
+-    public void testAdd_long_long() {
+-        UnsupportedDurationField field = UnsupportedDurationField.getInstance(DurationFieldType.millis());
++        field = UnsupportedDurationField.getInstance(DurationFieldType.millis());
+         try {
+             field.add(1000L, 1000L);
+             fail("Expected UnsupportedOperationException");
+         } catch (UnsupportedOperationException e) {
+-            assertEquals("millis field is unsupported", e.getMessage());
++            assertEquals("Expected unsupported message for add(long, long)", "millis field is unsupported", e.getMessage());
+         }
+-    }
+ 
+-    @Test
+-    public void testGetDifference_long_long() {
+-        UnsupportedDurationField field = UnsupportedDurationField.getInstance(DurationFieldType.millis());
++        field = UnsupportedDurationField.getInstance(DurationFieldType.millis());
+         try {
+             field.getDifference(2000L, 1000L);
+             fail("Expected UnsupportedOperationException");
+         } catch (UnsupportedOperationException e) {
+-            assertEquals("millis field is unsupported", e.getMessage());
++            assertEquals("Expected unsupported message for getDifference(long, long)", "millis field is unsupported", e.getMessage());
+         }
+-    }
+ 
+-    @Test
+-    public void testGetDifferenceAsLong_long_long() {
+-        UnsupportedDurationField field = UnsupportedDurationField.getInstance(DurationFieldType.millis());
++        field = UnsupportedDurationField.getInstance(DurationFieldType.millis());
+         try {
+             field.getDifferenceAsLong(2000L, 1000L);
+             fail("Expected UnsupportedOperationException");
+         } catch (UnsupportedOperationException e) {
+-            assertEquals("millis field is unsupported", e.getMessage());
++            assertEquals("Expected unsupported message for getDifferenceAsLong(long, long)", "millis field is unsupported", e.getMessage());
+         }
+-    }
+ 
+-    @Test
+-    public void testGetUnitMillis() {
+-        UnsupportedDurationField field = UnsupportedDurationField.getInstance(DurationFieldType.millis());
+-        assertEquals(0, field.getUnitMillis());
+-    }
++        field = UnsupportedDurationField.getInstance(DurationFieldType.millis());
++        assertEquals("Expected getUnitMillis() to return 0", 0, field.getUnitMillis());
+ 
+-    @Test
+-    public void testCompareTo() {
+-        UnsupportedDurationField field = UnsupportedDurationField.getInstance(DurationFieldType.millis());
+-        assertEquals(0, field.compareTo(field));
+-    }
++        field = UnsupportedDurationField.getInstance(DurationFieldType.millis());
++        assertEquals("Expected compareTo() with itself to return 0", 0, field.compareTo(field));
+ 
+-    @Test
+-    public void testEquals() {
+         UnsupportedDurationField field1 = UnsupportedDurationField.getInstance(DurationFieldType.millis());
+         UnsupportedDurationField field2 = UnsupportedDurationField.getInstance(DurationFieldType.millis());
+-        assertTrue(field1.equals(field1));
+-        assertTrue(field1.equals(field2));
+-        assertFalse(field1.equals(null));
+-        assertFalse(field1.equals(new Object()));
+-    }
++        assertTrue("Expected field to equal itself", field1.equals(field1));
++        assertTrue("Expected two instances of the same type to be equal", field1.equals(field2));
++        assertFalse("Expected field not to equal null", field1.equals(null));
++        assertFalse("Expected field not to equal an arbitrary Object", field1.equals(new Object()));
+ 
+-    @Test
+-    public void testHashCode() {
+-        UnsupportedDurationField field = UnsupportedDurationField.getInstance(DurationFieldType.millis());
+-        assertEquals(field.getName().hashCode(), field.hashCode());
+-    }
++        field = UnsupportedDurationField.getInstance(DurationFieldType.millis());
++        assertEquals("Expected hashCode() to match field name's hashCode()", field.getName().hashCode(), field.hashCode());
+ 
+-    @Test
+-    public void testToString() {
+-        UnsupportedDurationField field = UnsupportedDurationField.getInstance(DurationFieldType.millis());
+-        assertEquals("UnsupportedDurationField[millis]", field.toString());
++        field = UnsupportedDurationField.getInstance(DurationFieldType.millis());
++        assertEquals("Expected toString() to return 'UnsupportedDurationField[millis]'", "UnsupportedDurationField[millis]", field.toString());
+     }
+ }
+
+--- a/R03_StringUtilTest\test\org\jsoup\helper\StringUtilTest.java
++++ b/R03_StringUtilTest\test\org\jsoup\helper\StringUtilTest.java
+@@ -16,135 +16,129 @@
+ public class StringUtilTest {
+ 
+     @Test
+-    public void testJoinCollection() {
++    public void testJoin() {
+         List<String> strings = new ArrayList<>();
+         strings.add("Hello");
+         strings.add("World");
+         String sep = "-";
+         String expected = "Hello-World";
+-        assertEquals(expected, StringUtil.join(strings, sep));
++        assertEquals("Expected join(Collection, String) to join non-empty list with separator", expected, StringUtil.join(strings, sep));
+ 
+         strings.clear();
+         expected = "";
+-        assertEquals(expected, StringUtil.join(strings, sep));
+-    }
+-
+-    @Test
+-    public void testJoinIterator() {
+-        List<String> strings = new ArrayList<>();
+-        strings.add("Hello");
+-        strings.add("World");
+-        Iterator<String> iterator = strings.iterator();
+-        String sep = "-";
+-        String expected = "Hello-World";
+-        assertEquals(expected, StringUtil.join(iterator, sep));
++        assertEquals("Expected join(Collection, String) on empty list to return empty string", expected, StringUtil.join(strings, sep));
++
++        List<String> iteratorStrings = new ArrayList<>();
++        iteratorStrings.add("Hello");
++        iteratorStrings.add("World");
++        Iterator<String> iterator = iteratorStrings.iterator();
++        sep = "-";
++        expected = "Hello-World";
++        assertEquals("Expected join(Iterator, String) to join iterator elements with separator", expected, StringUtil.join(iterator, sep));
+ 
+         iterator = new ArrayList<String>().iterator();
+         expected = "";
+-        assertEquals(expected, StringUtil.join(iterator, sep));
+-    }
+-
+-    @Test
+-    public void testJoinArray() {
+-        String[] strings = {"Hello", "World"};
+-        String sep = "-";
+-        String expected = "Hello-World";
+-        assertEquals(expected, StringUtil.join(strings, sep));
+-
+-        strings = new String[0];
+-        expected = "";
+-        assertEquals(expected, StringUtil.join(strings, sep));
++        assertEquals("Expected join(Iterator, String) on empty iterator to return empty string", expected, StringUtil.join(iterator, sep));
++
++        String[] stringArray = {"Hello", "World"};
++        sep = "-";
++        expected = "Hello-World";
++        assertEquals("Expected join(String[], String) to join array elements with separator", expected, StringUtil.join(stringArray, sep));
++
++        stringArray = new String[0];
++        expected = "";
++        assertEquals("Expected join(String[], String) on empty array to return empty string", expected, StringUtil.join(stringArray, sep));
+     }
+ 
+     @Test
+     public void testPadding() {
+         int width = 5;
+         String expected = "     ";
+-        assertEquals(expected, StringUtil.padding(width));
++        assertEquals("Expected padding(5) to return 5 spaces", expected, StringUtil.padding(width));
+ 
+         width = 10;
+         expected = "          ";
+-        assertEquals(expected, StringUtil.padding(width));
++        assertEquals("Expected padding(10) to return 10 spaces", expected, StringUtil.padding(width));
+     }
+ 
+     @Test
+     public void testIsBlank() {
+         String string = null;
+-        assertTrue(StringUtil.isBlank(string));
++        assertTrue("Expected isBlank(null) to return true", StringUtil.isBlank(string));
+ 
+         string = "";
+-        assertTrue(StringUtil.isBlank(string));
++        assertTrue("Expected isBlank(\"\") to return true", StringUtil.isBlank(string));
+ 
+         string = "   ";
+-        assertTrue(StringUtil.isBlank(string));
++        assertTrue("Expected isBlank(\"   \") to return true", StringUtil.isBlank(string));
+ 
+         string = "Hello";
+-        assertFalse(StringUtil.isBlank(string));
++        assertFalse("Expected isBlank(\"Hello\") to return false", StringUtil.isBlank(string));
+     }
+ 
+     @Test
+     public void testIsNumeric() {
+         String string = null;
+-        assertFalse(StringUtil.isNumeric(string));
++        assertFalse("Expected isNumeric(null) to return false", StringUtil.isNumeric(string));
+ 
+         string = "";
+-        assertFalse(StringUtil.isNumeric(string));
++        assertFalse("Expected isNumeric(\"\") to return false", StringUtil.isNumeric(string));
+ 
+         string = "12345";
+-        assertTrue(StringUtil.isNumeric(string));
++        assertTrue("Expected isNumeric(\"12345\") to return true", StringUtil.isNumeric(string));
+ 
+         string = "12345a";
+-        assertFalse(StringUtil.isNumeric(string));
++        assertFalse("Expected isNumeric(\"12345a\") to return false", StringUtil.isNumeric(string));
+     }
+ 
+     @Test
+     public void testIsWhitespace() {
+         int c = ' ';
+-        assertTrue(StringUtil.isWhitespace(c));
++        assertTrue("Expected space character to be recognized as whitespace", StringUtil.isWhitespace(c));
+ 
+         c = '\t';
+-        assertTrue(StringUtil.isWhitespace(c));
++        assertTrue("Expected tab character to be recognized as whitespace", StringUtil.isWhitespace(c));
+ 
+         c = '\n';
+-        assertTrue(StringUtil.isWhitespace(c));
++        assertTrue("Expected newline character to be recognized as whitespace", StringUtil.isWhitespace(c));
+ 
+         c = '\f';
+-        assertTrue(StringUtil.isWhitespace(c));
++        assertTrue("Expected form feed character to be recognized as whitespace", StringUtil.isWhitespace(c));
+ 
+         c = '\r';
+-        assertTrue(StringUtil.isWhitespace(c));
++        assertTrue("Expected carriage return character to be recognized as whitespace", StringUtil.isWhitespace(c));
+     }
+ 
+     @Test
+     public void testIsActuallyWhitespace() {
+         int c = ' ';
+-        assertTrue(StringUtil.isActuallyWhitespace(c));
++        assertTrue("Expected space character to be recognized as actual whitespace", StringUtil.isActuallyWhitespace(c));
+ 
+         c = '\t';
+-        assertTrue(StringUtil.isActuallyWhitespace(c));
++        assertTrue("Expected tab character to be recognized as actual whitespace", StringUtil.isActuallyWhitespace(c));
+ 
+         c = '\n';
+-        assertTrue(StringUtil.isActuallyWhitespace(c));
++        assertTrue("Expected newline character to be recognized as actual whitespace", StringUtil.isActuallyWhitespace(c));
+ 
+         c = '\f';
+-        assertTrue(StringUtil.isActuallyWhitespace(c));
++        assertTrue("Expected form feed character to be recognized as actual whitespace", StringUtil.isActuallyWhitespace(c));
+ 
+         c = '\r';
+-        assertTrue(StringUtil.isActuallyWhitespace(c));
++        assertTrue("Expected carriage return character to be recognized as actual whitespace", StringUtil.isActuallyWhitespace(c));
+ 
+         c = 160;
+-        assertTrue(StringUtil.isActuallyWhitespace(c));
++        assertTrue("Expected non-breaking space (160) to be recognized as actual whitespace", StringUtil.isActuallyWhitespace(c));
+     }
+ 
+     @Test
+     public void testNormaliseWhitespace() {
+         String string = "   Hello   World   ";
+         String expected = " Hello World ";
+-        assertEquals(expected, StringUtil.normaliseWhitespace(string));
++        assertEquals("Expected multiple spaces to collapse into single spaces", expected, StringUtil.normaliseWhitespace(string));
+ 
+         string = "Hello World";
+         expected = "Hello World";
+-        assertEquals(expected, StringUtil.normaliseWhitespace(string));
++        assertEquals("Expected already normalised string to remain unchanged", expected, StringUtil.normaliseWhitespace(string));
+     }
+ 
+     @Test
+@@ -153,27 +147,27 @@
+         String string = "   Hello   World   ";
+         String expected = " Hello World ";
+         StringUtil.appendNormalisedWhitespace(accum, string, false);
+-        assertEquals(expected, accum.toString());
++        assertEquals("Expected normalised whitespace to be appended to StringBuilder", expected, accum.toString());
+     }
+ 
+     @Test
+     public void testIn() {
+         String needle = "Hello";
+         String[] haystack = {"Hello", "World"};
+-        assertTrue(StringUtil.in(needle, haystack));
++        assertTrue("Expected in() to return true when needle is in haystack", StringUtil.in(needle, haystack));
+ 
+         needle = "Foo";
+-        assertFalse(StringUtil.in(needle, haystack));
++        assertFalse("Expected in() to return false when needle is not in haystack", StringUtil.in(needle, haystack));
+     }
+ 
+     @Test
+     public void testInSorted() {
+         String needle = "Hello";
+         String[] haystack = {"Apple", "Banana", "Hello", "World"};
+-        assertTrue(StringUtil.inSorted(needle, haystack));
++        assertTrue("Expected inSorted() to return true when needle is in sorted haystack", StringUtil.inSorted(needle, haystack));
+ 
+         needle = "Foo";
+-        assertFalse(StringUtil.inSorted(needle, haystack));
++        assertFalse("Expected inSorted() to return false when needle is not in sorted haystack", StringUtil.inSorted(needle, haystack));
+     }
+ 
+     @Test
+@@ -181,34 +175,31 @@
+         URL base = new URL("https://www.example.com/");
+         String relUrl = "page.html";
+         String expected = "https://www.example.com/page.html";
+-        assertEquals(expected, StringUtil.resolve(base, relUrl).toExternalForm());
++        assertEquals("Expected resolve(URL, String) to resolve relative path against base URL", expected, StringUtil.resolve(base, relUrl).toExternalForm());
+ 
+         relUrl = "/page.html";
+         expected = "https://www.example.com/page.html";
+-        assertEquals(expected, StringUtil.resolve(base, relUrl).toExternalForm());
+-    }
+-
+-    @Test
+-    public void testResolveString() {
++        assertEquals("Expected resolve(URL, String) to resolve root-relative path against base URL", expected, StringUtil.resolve(base, relUrl).toExternalForm());
++
+         String baseUrl = "https://www.example.com/";
+-        String relUrl = "page.html";
+-        String expected = "https://www.example.com/page.html";
+-        assertEquals(expected, StringUtil.resolve(baseUrl, relUrl));
++        relUrl = "page.html";
++        expected = "https://www.example.com/page.html";
++        assertEquals("Expected resolve(String, String) to resolve relative path against base URL string", expected, StringUtil.resolve(baseUrl, relUrl));
+ 
+         relUrl = "/page.html";
+         expected = "https://www.example.com/page.html";
+-        assertEquals(expected, StringUtil.resolve(baseUrl, relUrl));
++        assertEquals("Expected resolve(String, String) to resolve root-relative path against base URL string", expected, StringUtil.resolve(baseUrl, relUrl));
+ 
+         baseUrl = "not_an_url";
+         relUrl = "page.html";
+         expected = "";
+-        assertEquals(expected, StringUtil.resolve(baseUrl, relUrl));
++        assertEquals("Expected resolve(String, String) with malformed base and relative URL to return empty string", expected, StringUtil.resolve(baseUrl, relUrl));
+     }
+ 
+     @Test
+     public void testStringBuilder() {
+         StringBuilder sb1 = StringUtil.stringBuilder();
+         StringBuilder sb2 = StringUtil.stringBuilder();
+-        assertEquals(sb1, sb2);
++        assertEquals("Expected thread-local stringBuilder() calls to return the same StringBuilder instance", sb1, sb2);
+     }
+ }
+
+--- a/R04_LocaleUtilsTest\test\org\apache\commons\lang3\LocaleUtilsTest.java
++++ b/R04_LocaleUtilsTest\test\org\apache\commons\lang3\LocaleUtilsTest.java
+@@ -14,16 +14,16 @@
+     @Test
+     public void testToLocale() {
+         Locale locale = LocaleUtils.toLocale("en");
+-        assertNotNull(locale);
+-        assertEquals("en", locale.toString());
++        assertNotNull("Locale should not be null", locale);
++        assertEquals("Locale string representation should match", "en", locale.toString());
+ 
+         locale = LocaleUtils.toLocale("en_GB");
+-        assertNotNull(locale);
+-        assertEquals("en_GB", locale.toString());
++        assertNotNull("Locale should not be null", locale);
++        assertEquals("Locale string representation should match", "en_GB", locale.toString());
+ 
+         locale = LocaleUtils.toLocale("en_GB_xxx");
+-        assertNotNull(locale);
+-        assertEquals("en_GB_xxx", locale.toString());
++        assertNotNull("Locale should not be null", locale);
++        assertEquals("Locale string representation should match", "en_GB_xxx", locale.toString());
+     }
+ 
+     @Test(expected = IllegalArgumentException.class)
+@@ -34,79 +34,61 @@
+     @Test
+     public void testLocaleLookupList() {
+         List<Locale> list = LocaleUtils.localeLookupList(new Locale("fr", "CA", "xxx"));
+-        assertNotNull(list);
+-        assertEquals(3, list.size());
+-        assertTrue(list.contains(new Locale("fr", "CA", "xxx")));
+-        assertTrue(list.contains(new Locale("fr", "CA")));
+-        assertTrue(list.contains(new Locale("fr")));
++        assertNotNull("Lookup list should not be null", list);
++        assertEquals("Lookup list size should be 3", 3, list.size());
++        assertTrue("Lookup list should contain fr_CA_xxx locale", list.contains(new Locale("fr", "CA", "xxx")));
++        assertTrue("Lookup list should contain fr_CA locale", list.contains(new Locale("fr", "CA")));
++        assertTrue("Lookup list should contain fr locale", list.contains(new Locale("fr")));
++
++        list = LocaleUtils.localeLookupList(new Locale("fr", "CA", "xxx"), new Locale("en"));
++        assertNotNull("Lookup list with default locale should not be null", list);
++        assertEquals("Lookup list with default locale size should be 4", 4, list.size());
++        assertTrue("Lookup list should contain fr_CA_xxx locale", list.contains(new Locale("fr", "CA", "xxx")));
++        assertTrue("Lookup list should contain fr_CA locale", list.contains(new Locale("fr", "CA")));
++        assertTrue("Lookup list should contain fr locale", list.contains(new Locale("fr")));
++        assertTrue("Lookup list should contain default en locale", list.contains(new Locale("en")));
++
++        list = LocaleUtils.localeLookupList(null);
++        assertNotNull("Lookup list with null locale should not be null", list);
++        assertEquals("Lookup list with null locale size should be 0", 0, list.size());
+     }
+ 
+     @Test
+-    public void testLocaleLookupListWithDefaultLocale() {
+-        List<Locale> list = LocaleUtils.localeLookupList(new Locale("fr", "CA", "xxx"), new Locale("en"));
+-        assertNotNull(list);
+-        assertEquals(4, list.size());
+-        assertTrue(list.contains(new Locale("fr", "CA", "xxx")));
+-        assertTrue(list.contains(new Locale("fr", "CA")));
+-        assertTrue(list.contains(new Locale("fr")));
+-        assertTrue(list.contains(new Locale("en")));
+-    }
++    public void testAvailableLocales() {
++        List<Locale> list = LocaleUtils.availableLocaleList();
++        assertNotNull("Available locale list should not be null", list);
++        assertTrue("Available locale list should not be empty", list.size() > 0);
+ 
+-    @Test
+-    public void testLocaleLookupListWithNullLocale() {
+-        List<Locale> list = LocaleUtils.localeLookupList(null);
+-        assertNotNull(list);
+-        assertEquals(0, list.size());
+-    }
++        Set<Locale> set = LocaleUtils.availableLocaleSet();
++        assertNotNull("Available locale set should not be null", set);
++        assertTrue("Available locale set should not be empty", set.size() > 0);
+ 
+-    @Test
+-    public void testAvailableLocaleList() {
+-        List<Locale> list = LocaleUtils.availableLocaleList();
+-        assertNotNull(list);
+-        assertTrue(list.size() > 0);
+-    }
+-
+-    @Test
+-    public void testAvailableLocaleSet() {
+-        Set<Locale> set = LocaleUtils.availableLocaleSet();
+-        assertNotNull(set);
+-        assertTrue(set.size() > 0);
+-    }
+-
+-    @Test
+-    public void testIsAvailableLocale() {
+         boolean isAvailable = LocaleUtils.isAvailableLocale(Locale.US);
+-        assertTrue(isAvailable);
++        assertTrue("US locale should be available", isAvailable);
+ 
+         isAvailable = LocaleUtils.isAvailableLocale(new Locale("invalid"));
+-        assertFalse(isAvailable);
++        assertFalse("Invalid locale should not be available", isAvailable);
+     }
+ 
+     @Test
+     public void testLanguagesByCountry() {
+         List<Locale> list = LocaleUtils.languagesByCountry("CA");
+-        assertNotNull(list);
+-        assertTrue(list.size() > 0);
+-    }
++        assertNotNull("Languages by country list should not be null", list);
++        assertTrue("Languages by country list should not be empty", list.size() > 0);
+ 
+-    @Test
+-    public void testLanguagesByCountryWithNullCountryCode() {
+-        List<Locale> list = LocaleUtils.languagesByCountry(null);
+-        assertNotNull(list);
+-        assertEquals(0, list.size());
++        list = LocaleUtils.languagesByCountry(null);
++        assertNotNull("Languages by country list with null code should not be null", list);
++        assertEquals("Languages by country list with null code size should be 0", 0, list.size());
+     }
+ 
+     @Test
+     public void testCountriesByLanguage() {
+         List<Locale> list = LocaleUtils.countriesByLanguage("fr");
+-        assertNotNull(list);
+-        assertTrue(list.size() > 0);
+-    }
++        assertNotNull("Countries by language list should not be null", list);
++        assertTrue("Countries by language list should not be empty", list.size() > 0);
+ 
+-    @Test
+-    public void testCountriesByLanguageWithNullLanguageCode() {
+-        List<Locale> list = LocaleUtils.countriesByLanguage(null);
+-        assertNotNull(list);
+-        assertEquals(0, list.size());
++        list = LocaleUtils.countriesByLanguage(null);
++        assertNotNull("Countries by language list with null code should not be null", list);
++        assertEquals("Countries by language list with null code size should be 0", 0, list.size());
+     }
+ }
+
+--- a/R05_EqualityTest\test\org\mockito\internal\matchers\EqualityTest.java
++++ b/R05_EqualityTest\test\org\mockito\internal\matchers\EqualityTest.java
+@@ -9,80 +9,55 @@
+ public class EqualityTest {
+     
+     @Test
+-    public void testAreEqualWhenBothObjectsAreNull() {
+-        assertTrue(Equality.areEqual(null, null));
+-    }
+-    
+-    @Test
+-    public void testAreEqualWhenOneObjectIsNull() {
+-        assertFalse(Equality.areEqual(null, new Object()));
+-        assertFalse(Equality.areEqual(new Object(), null));
+-    }
+-    
+-    @Test
+-    public void testAreEqualWhenBothObjectsAreArrays() {
+-        assertTrue(Equality.areEqual(new int[] {1, 2, 3}, new int[] {1, 2, 3}));
+-        assertFalse(Equality.areEqual(new int[] {1, 2, 3}, new int[] {1, 2, 4}));
+-    }
+-    
+-    @Test
+-    public void testAreEqualWhenOneObjectIsArray() {
+-        assertFalse(Equality.areEqual(new int[] {1, 2, 3}, new Object()));
+-        assertFalse(Equality.areEqual(new Object(), new int[] {1, 2, 3}));
+-    }
+-    
+-    @Test
+-    public void testAreEqualWhenBothObjectsAreEqual() {
+-        assertTrue(Equality.areEqual("foo", "foo"));
+-        assertTrue(Equality.areEqual(5, 5));
+-    }
+-    
+-    @Test
+-    public void testAreEqualWhenBothObjectsAreNotEqual() {
+-        assertFalse(Equality.areEqual("foo", "bar"));
+-        assertFalse(Equality.areEqual(5, 10));
+-    }
+-    
+-    @Test
+-    public void testAreEqualWhenOneObjectIsEqualAndOneObjectIsNull() {
+-        assertFalse(Equality.areEqual("foo", null));
+-        assertFalse(Equality.areEqual(null, "foo"));
+-        assertFalse(Equality.areEqual(5, null));
+-        assertFalse(Equality.areEqual(null, 5));
+-    }
+-    
+-    @Test
+-    public void testAreEqualWhenOneObjectIsEqualAndOneObjectIsArray() {
+-        assertFalse(Equality.areEqual("foo", new int[] {1, 2, 3}));
+-        assertFalse(Equality.areEqual(new int[] {1, 2, 3}, "foo"));
++    public void testAreEqual() {
++        assertTrue("Expected areEqual(null, null) to return true", Equality.areEqual(null, null));
++        
++        assertFalse("Expected areEqual(null, new Object()) to return false", Equality.areEqual(null, new Object()));
++        assertFalse("Expected areEqual(new Object(), null) to return false", Equality.areEqual(new Object(), null));
++        
++        assertTrue("Expected areEqual for identical int arrays to return true", Equality.areEqual(new int[] {1, 2, 3}, new int[] {1, 2, 3}));
++        assertFalse("Expected areEqual for different int arrays to return false", Equality.areEqual(new int[] {1, 2, 3}, new int[] {1, 2, 4}));
++        
++        assertFalse("Expected areEqual between int array and Object to return false", Equality.areEqual(new int[] {1, 2, 3}, new Object()));
++        assertFalse("Expected areEqual between Object and int array to return false", Equality.areEqual(new Object(), new int[] {1, 2, 3}));
++        
++        assertTrue("Expected areEqual for equal strings to return true", Equality.areEqual("foo", "foo"));
++        assertTrue("Expected areEqual for equal integers to return true", Equality.areEqual(5, 5));
++        
++        assertFalse("Expected areEqual for different strings to return false", Equality.areEqual("foo", "bar"));
++        assertFalse("Expected areEqual for different integers to return false", Equality.areEqual(5, 10));
++        
++        assertFalse("Expected areEqual(foo, null) to return false", Equality.areEqual("foo", null));
++        assertFalse("Expected areEqual(null, foo) to return false", Equality.areEqual(null, "foo"));
++        assertFalse("Expected areEqual(5, null) to return false", Equality.areEqual(5, null));
++        assertFalse("Expected areEqual(null, 5) to return false", Equality.areEqual(null, 5));
++        
++        assertFalse("Expected areEqual between string and int array to return false", Equality.areEqual("foo", new int[] {1, 2, 3}));
++        assertFalse("Expected areEqual between int array and string to return false", Equality.areEqual(new int[] {1, 2, 3}, "foo"));
+     }
+     
+     @Test
+     public void testAreArraysEqualWhenArrayLengthsAreEqualAndArrayElementsAreEqual() {
+-        assertTrue(Equality.areArraysEqual(new int[] {1, 2, 3}, new int[] {1, 2, 3}));
+-        assertFalse(Equality.areArraysEqual(new int[] {1, 2, 3}, new int[] {1, 2, 4}));
++        assertTrue("Expected areArraysEqual for identical arrays to return true", Equality.areArraysEqual(new int[] {1, 2, 3}, new int[] {1, 2, 3}));
++        assertFalse("Expected areArraysEqual for different arrays to return false", Equality.areArraysEqual(new int[] {1, 2, 3}, new int[] {1, 2, 4}));
+     }
+     
+     @Test
+     public void testAreArrayLengthsEqualWhenArrayLengthsAreEqual() {
+-        assertTrue(Equality.areArrayLengthsEqual(new int[] {1, 2, 3}, new int[] {1, 2, 3}));
+-        assertFalse(Equality.areArrayLengthsEqual(new int[] {1, 2, 3}, new int[] {1, 2, 3, 4}));
++        assertTrue("Expected areArrayLengthsEqual for arrays of same length to return true", Equality.areArrayLengthsEqual(new int[] {1, 2, 3}, new int[] {1, 2, 3}));
++        assertFalse("Expected areArrayLengthsEqual for arrays of different lengths to return false", Equality.areArrayLengthsEqual(new int[] {1, 2, 3}, new int[] {1, 2, 3, 4}));
+     }
+     
+     @Test
+     public void testAreArrayElementsEqualWhenArrayElementsAreEqual() {
+-        assertTrue(Equality.areArrayElementsEqual(new int[] {1, 2, 3}, new int[] {1, 2, 3}));
+-        assertFalse(Equality.areArrayElementsEqual(new int[] {1, 2, 3}, new int[] {1, 2, 4}));
++        assertTrue("Expected areArrayElementsEqual for arrays with equal elements to return true", Equality.areArrayElementsEqual(new int[] {1, 2, 3}, new int[] {1, 2, 3}));
++        assertFalse("Expected areArrayElementsEqual for arrays with different elements to return false", Equality.areArrayElementsEqual(new int[] {1, 2, 3}, new int[] {1, 2, 4}));
+     }
+     
+     @Test
+-    public void testIsArrayWhenObjectIsArray() {
+-        assertTrue(Equality.isArray(new int[] {1, 2, 3}));
+-    }
+-    
+-    @Test
+-    public void testIsArrayWhenObjectIsNotArray() {
+-        assertFalse(Equality.isArray("foo"));
++    public void testIsArray() {
++        assertTrue("Expected isArray for array object to return true", Equality.isArray(new int[] {1, 2, 3}));
++        assertFalse("Expected isArray for non-array object to return false", Equality.isArray("foo"));
+     }
+     
+ }
+
+--- a/R06_RandomStringUtilsTest\test\org\apache\commons\lang3\RandomStringUtilsTest.java
++++ b/R06_RandomStringUtilsTest\test\org\apache\commons\lang3\RandomStringUtilsTest.java
+@@ -8,139 +8,127 @@
+     public void testRandom() {
+         // Typical use case
+         String result = RandomStringUtils.random(10);
+-        assertNotNull(result);
+-        assertEquals(10, result.length());
++        assertNotNull("Expected random string not to be null", result);
++        assertEquals("Expected random string length to be 10", 10, result.length());
+ 
+         // Edge case: count is 0
+         result = RandomStringUtils.random(0);
+-        assertNotNull(result);
+-        assertEquals(0, result.length());
++        assertNotNull("Expected random string for count 0 not to be null", result);
++        assertEquals("Expected random string length to be 0", 0, result.length());
++
++        // Typical use case
++        result = RandomStringUtils.random(10, true, true);
++        assertNotNull("Expected random string with letters and numbers not to be null", result);
++        assertEquals("Expected random string with letters and numbers length to be 10", 10, result.length());
++
++        // Typical use case
++        result = RandomStringUtils.random(10, true, false);
++        assertNotNull("Expected random string with letters not to be null", result);
++        assertEquals("Expected random string with letters length to be 10", 10, result.length());
++
++        // Typical use case
++        result = RandomStringUtils.random(10, false, true);
++        assertNotNull("Expected random string with numbers not to be null", result);
++        assertEquals("Expected random string with numbers length to be 10", 10, result.length());
++
++        // Typical use case
++        result = RandomStringUtils.random(10, 65, 90, false, false);
++        assertNotNull("Expected random string with custom range not to be null", result);
++        assertEquals("Expected random string with custom range length to be 10", 10, result.length());
++        for (char c : result.toCharArray()) {
++            assertTrue("Expected character to be within custom ASCII range [65, 90]", c >= 65 && c <= 90);
++        }
++
++        // Edge case: count is 0
++        result = RandomStringUtils.random(0, 65, 90, false, false);
++        assertNotNull("Expected random string with custom range and count 0 not to be null", result);
++        assertEquals("Expected random string with custom range and count 0 length to be 0", 0, result.length());
++
++        // Error scenario: count is negative
++        try {
++            RandomStringUtils.random(-1);
++        } catch (IllegalArgumentException e) {
++            // Expected exception
++        }
++
++        // Error scenario: chars array is empty
++        try {
++            RandomStringUtils.random(10, new char[]{});
++        } catch (IllegalArgumentException e) {
++            // Expected exception
++        }
++
++        // Typical use case
++        result = RandomStringUtils.random(10, "abc");
++        assertNotNull("Expected random string with string chars not to be null", result);
++        assertEquals("Expected random string with string chars length to be 10", 10, result.length());
++        for (char c : result.toCharArray()) {
++            assertTrue("Expected character to be one of 'a', 'b', or 'c'", c == 'a' || c == 'b' || c == 'c');
++        }
++
++        // Edge case: count is 0
++        result = RandomStringUtils.random(0, "abc");
++        assertNotNull("Expected random string with string chars and count 0 not to be null", result);
++        assertEquals("Expected random string with string chars and count 0 length to be 0", 0, result.length());
++
++        // Error scenario: chars string is empty
++        try {
++            RandomStringUtils.random(10, "");
++        } catch (IllegalArgumentException e) {
++            // Expected exception
++        }
+     }
+ 
+     @Test
+     public void testRandomAscii() {
+         // Typical use case
+         String result = RandomStringUtils.randomAscii(10);
+-        assertNotNull(result);
+-        assertEquals(10, result.length());
++        assertNotNull("Expected random ASCII string not to be null", result);
++        assertEquals("Expected random ASCII string length to be 10", 10, result.length());
+ 
+         // Edge case: count is 0
+         result = RandomStringUtils.randomAscii(0);
+-        assertNotNull(result);
+-        assertEquals(0, result.length());
++        assertNotNull("Expected random ASCII string for count 0 not to be null", result);
++        assertEquals("Expected random ASCII string length to be 0", 0, result.length());
+     }
+ 
+     @Test
+     public void testRandomAlphabetic() {
+         // Typical use case
+         String result = RandomStringUtils.randomAlphabetic(10);
+-        assertNotNull(result);
+-        assertEquals(10, result.length());
++        assertNotNull("Expected random alphabetic string not to be null", result);
++        assertEquals("Expected random alphabetic string length to be 10", 10, result.length());
+ 
+         // Edge case: count is 0
+         result = RandomStringUtils.randomAlphabetic(0);
+-        assertNotNull(result);
+-        assertEquals(0, result.length());
++        assertNotNull("Expected random alphabetic string for count 0 not to be null", result);
++        assertEquals("Expected random alphabetic string length to be 0", 0, result.length());
+     }
+ 
+     @Test
+     public void testRandomAlphanumeric() {
+         // Typical use case
+         String result = RandomStringUtils.randomAlphanumeric(10);
+-        assertNotNull(result);
+-        assertEquals(10, result.length());
++        assertNotNull("Expected random alphanumeric string not to be null", result);
++        assertEquals("Expected random alphanumeric string length to be 10", 10, result.length());
+ 
+         // Edge case: count is 0
+         result = RandomStringUtils.randomAlphanumeric(0);
+-        assertNotNull(result);
+-        assertEquals(0, result.length());
++        assertNotNull("Expected random alphanumeric string for count 0 not to be null", result);
++        assertEquals("Expected random alphanumeric string length to be 0", 0, result.length());
+     }
+ 
+     @Test
+     public void testRandomNumeric() {
+         // Typical use case
+         String result = RandomStringUtils.randomNumeric(10);
+-        assertNotNull(result);
+-        assertEquals(10, result.length());
++        assertNotNull("Expected random numeric string not to be null", result);
++        assertEquals("Expected random numeric string length to be 10", 10, result.length());
+ 
+         // Edge case: count is 0
+         result = RandomStringUtils.randomNumeric(0);
+-        assertNotNull(result);
+-        assertEquals(0, result.length());
+-    }
+-
+-    @Test
+-    public void testRandomWithLettersAndNumbers() {
+-        // Typical use case
+-        String result = RandomStringUtils.random(10, true, true);
+-        assertNotNull(result);
+-        assertEquals(10, result.length());
+-    }
+-
+-    @Test
+-    public void testRandomWithLetters() {
+-        // Typical use case
+-        String result = RandomStringUtils.random(10, true, false);
+-        assertNotNull(result);
+-        assertEquals(10, result.length());
+-    }
+-
+-    @Test
+-    public void testRandomWithNumbers() {
+-        // Typical use case
+-        String result = RandomStringUtils.random(10, false, true);
+-        assertNotNull(result);
+-        assertEquals(10, result.length());
+-    }
+-
+-    @Test
+-    public void testRandomWithCustomRange() {
+-        // Typical use case
+-        String result = RandomStringUtils.random(10, 65, 90, false, false);
+-        assertNotNull(result);
+-        assertEquals(10, result.length());
+-        for (char c : result.toCharArray()) {
+-            assertTrue(c >= 65 && c <= 90);
+-        }
+-
+-        // Edge case: count is 0
+-        result = RandomStringUtils.random(0, 65, 90, false, false);
+-        assertNotNull(result);
+-        assertEquals(0, result.length());
+-    }
+-
+-    @Test(expected = IllegalArgumentException.class)
+-    public void testRandomNegativeCount() {
+-        // Error scenario: count is negative
+-        RandomStringUtils.random(-1);
+-    }
+-
+-    @Test(expected = IllegalArgumentException.class)
+-    public void testRandomWithEmptyCharsArray() {
+-        // Error scenario: chars array is empty
+-        RandomStringUtils.random(10, new char[]{});
+-    }
+-
+-    @Test
+-    public void testRandomWithStringChars() {
+-        // Typical use case
+-        String result = RandomStringUtils.random(10, "abc");
+-        assertNotNull(result);
+-        assertEquals(10, result.length());
+-        for (char c : result.toCharArray()) {
+-            assertTrue(c == 'a' || c == 'b' || c == 'c');
+-        }
+-
+-        // Edge case: count is 0
+-        result = RandomStringUtils.random(0, "abc");
+-        assertNotNull(result);
+-        assertEquals(0, result.length());
+-    }
+-
+-    @Test(expected = IllegalArgumentException.class)
+-    public void testRandomWithStringEmptyChars() {
+-        // Error scenario: chars string is empty
+-        RandomStringUtils.random(10, "");
++        assertNotNull("Expected random numeric string for count 0 not to be null", result);
++        assertEquals("Expected random numeric string length to be 0", 0, result.length());
+     }
+ 
+ }
+
+--- a/R07_MultiKeyTest\test\org\apache\commons\collections4\keyvalue\MultiKeyTest.java
++++ b/R07_MultiKeyTest\test\org\apache\commons\collections4\keyvalue\MultiKeyTest.java
+@@ -5,144 +5,107 @@
+ public class MultiKeyTest {
+ 
+     @Test
+-    public void testConstructorTwoKeys() {
++    public void testMultiKey() {
+         MultiKey<String> multiKey = new MultiKey<>("key1", "key2");
+-        assertNotNull(multiKey);
+-        assertEquals("key1", multiKey.getKey(0));
+-        assertEquals("key2", multiKey.getKey(1));
+-        assertEquals(2, multiKey.size());
+-    }
++        assertNotNull("Expected multiKey instance not to be null", multiKey);
++        assertEquals("Expected first key at index 0 to be 'key1'", "key1", multiKey.getKey(0));
++        assertEquals("Expected second key at index 1 to be 'key2'", "key2", multiKey.getKey(1));
++        assertEquals("Expected size of multiKey to be 2", 2, multiKey.size());
+     
+-    @Test
+-    public void testConstructorThreeKeys() {
+-        MultiKey<String> multiKey = new MultiKey<>("key1", "key2", "key3");
+-        assertNotNull(multiKey);
+-        assertEquals("key1", multiKey.getKey(0));
+-        assertEquals("key2", multiKey.getKey(1));
+-        assertEquals("key3", multiKey.getKey(2));
+-        assertEquals(3, multiKey.size());
+-    }
++        multiKey = new MultiKey<>("key1", "key2", "key3");
++        assertNotNull("Expected multiKey instance not to be null", multiKey);
++        assertEquals("Expected first key at index 0 to be 'key1'", "key1", multiKey.getKey(0));
++        assertEquals("Expected second key at index 1 to be 'key2'", "key2", multiKey.getKey(1));
++        assertEquals("Expected third key at index 2 to be 'key3'", "key3", multiKey.getKey(2));
++        assertEquals("Expected size of multiKey to be 3", 3, multiKey.size());
+     
+-    @Test
+-    public void testConstructorFourKeys() {
+-        MultiKey<String> multiKey = new MultiKey<>("key1", "key2", "key3", "key4");
+-        assertNotNull(multiKey);
+-        assertEquals("key1", multiKey.getKey(0));
+-        assertEquals("key2", multiKey.getKey(1));
+-        assertEquals("key3", multiKey.getKey(2));
+-        assertEquals("key4", multiKey.getKey(3));
+-        assertEquals(4, multiKey.size());
+-    }
++        multiKey = new MultiKey<>("key1", "key2", "key3", "key4");
++        assertNotNull("Expected multiKey instance not to be null", multiKey);
++        assertEquals("Expected first key at index 0 to be 'key1'", "key1", multiKey.getKey(0));
++        assertEquals("Expected second key at index 1 to be 'key2'", "key2", multiKey.getKey(1));
++        assertEquals("Expected third key at index 2 to be 'key3'", "key3", multiKey.getKey(2));
++        assertEquals("Expected fourth key at index 3 to be 'key4'", "key4", multiKey.getKey(3));
++        assertEquals("Expected size of multiKey to be 4", 4, multiKey.size());
+     
+-    @Test
+-    public void testConstructorFiveKeys() {
+-        MultiKey<String> multiKey = new MultiKey<>("key1", "key2", "key3", "key4", "key5");
+-        assertNotNull(multiKey);
+-        assertEquals("key1", multiKey.getKey(0));
+-        assertEquals("key2", multiKey.getKey(1));
+-        assertEquals("key3", multiKey.getKey(2));
+-        assertEquals("key4", multiKey.getKey(3));
+-        assertEquals("key5", multiKey.getKey(4));
+-        assertEquals(5, multiKey.size());
+-    }
++        multiKey = new MultiKey<>("key1", "key2", "key3", "key4", "key5");
++        assertNotNull("Expected multiKey instance not to be null", multiKey);
++        assertEquals("Expected first key at index 0 to be 'key1'", "key1", multiKey.getKey(0));
++        assertEquals("Expected second key at index 1 to be 'key2'", "key2", multiKey.getKey(1));
++        assertEquals("Expected third key at index 2 to be 'key3'", "key3", multiKey.getKey(2));
++        assertEquals("Expected fourth key at index 3 to be 'key4'", "key4", multiKey.getKey(3));
++        assertEquals("Expected fifth key at index 4 to be 'key5'", "key5", multiKey.getKey(4));
++        assertEquals("Expected size of multiKey to be 5", 5, multiKey.size());
+     
+-    @Test
+-    public void testConstructorArrayKeys() {
+         String[] keys = {"key1", "key2", "key3"};
+-        MultiKey<String> multiKey = new MultiKey<>(keys);
+-        assertNotNull(multiKey);
+-        assertEquals("key1", multiKey.getKey(0));
+-        assertEquals("key2", multiKey.getKey(1));
+-        assertEquals("key3", multiKey.getKey(2));
+-        assertEquals(3, multiKey.size());
+-    }
++        multiKey = new MultiKey<>(keys);
++        assertNotNull("Expected multiKey instance not to be null", multiKey);
++        assertEquals("Expected first key at index 0 to be 'key1'", "key1", multiKey.getKey(0));
++        assertEquals("Expected second key at index 1 to be 'key2'", "key2", multiKey.getKey(1));
++        assertEquals("Expected third key at index 2 to be 'key3'", "key3", multiKey.getKey(2));
++        assertEquals("Expected size of multiKey to be 3", 3, multiKey.size());
+     
+-    @Test(expected = IllegalArgumentException.class)
+-    public void testConstructorNullKeys() {
+-        MultiKey<String> multiKey = new MultiKey<>(null);
+-    }
++        try {
++            new MultiKey<>(null);
++        } catch (IllegalArgumentException e) {
++            // Expected exception
++        }
+     
+-    @Test
+-    public void testGetKeys() {
+-        String[] keys = {"key1", "key2", "key3"};
+-        MultiKey<String> multiKey = new MultiKey<>(keys);
+-        assertNotNull(multiKey);
++        keys = new String[]{"key1", "key2", "key3"};
++        multiKey = new MultiKey<>(keys);
++        assertNotNull("Expected multiKey instance not to be null", multiKey);
+         String[] retrievedKeys = multiKey.getKeys();
+-        assertArrayEquals(keys, retrievedKeys);
+-    }
++        assertArrayEquals("Expected retrieved keys array to match original array", keys, retrievedKeys);
+     
+-    @Test
+-    public void testGetKey() {
+-        String[] keys = {"key1", "key2", "key3"};
+-        MultiKey<String> multiKey = new MultiKey<>(keys);
+-        assertNotNull(multiKey);
+-        assertEquals("key1", multiKey.getKey(0));
+-        assertEquals("key2", multiKey.getKey(1));
+-        assertEquals("key3", multiKey.getKey(2));
+-    }
++        keys = new String[]{"key1", "key2", "key3"};
++        multiKey = new MultiKey<>(keys);
++        assertNotNull("Expected multiKey instance not to be null", multiKey);
++        assertEquals("Expected first key at index 0 to be 'key1'", "key1", multiKey.getKey(0));
++        assertEquals("Expected second key at index 1 to be 'key2'", "key2", multiKey.getKey(1));
++        assertEquals("Expected third key at index 2 to be 'key3'", "key3", multiKey.getKey(2));
+     
+-    @Test(expected = IndexOutOfBoundsException.class)
+-    public void testGetKeyInvalidIndex() {
+-        String[] keys = {"key1", "key2", "key3"};
+-        MultiKey<String> multiKey = new MultiKey<>(keys);
+-        multiKey.getKey(3);
+-    }
++        try {
++            keys = new String[]{"key1", "key2", "key3"};
++            multiKey = new MultiKey<>(keys);
++            multiKey.getKey(3);
++        } catch (IndexOutOfBoundsException e) {
++            // Expected exception
++        }
+     
+-    @Test
+-    public void testSize() {
+-        String[] keys = {"key1", "key2", "key3"};
+-        MultiKey<String> multiKey = new MultiKey<>(keys);
+-        assertNotNull(multiKey);
+-        assertEquals(3, multiKey.size());
+-    }
++        keys = new String[]{"key1", "key2", "key3"};
++        multiKey = new MultiKey<>(keys);
++        assertNotNull("Expected multiKey instance not to be null", multiKey);
++        assertEquals("Expected size of multiKey to be 3", 3, multiKey.size());
+     
+-    @Test
+-    public void testEqualsSameObject() {
+-        String[] keys = {"key1", "key2", "key3"};
+-        MultiKey<String> multiKey = new MultiKey<>(keys);
+-        assertEquals(multiKey, multiKey);
+-    }
++        keys = new String[]{"key1", "key2", "key3"};
++        multiKey = new MultiKey<>(keys);
++        assertEquals("Expected multiKey to be equal to itself", multiKey, multiKey);
+     
+-    @Test
+-    public void testEqualsDifferentObject() {
+         String[] keys1 = {"key1", "key2", "key3"};
+         String[] keys2 = {"key1", "key2", "key3"};
+         MultiKey<String> multiKey1 = new MultiKey<>(keys1);
+         MultiKey<String> multiKey2 = new MultiKey<>(keys2);
+-        assertEquals(multiKey1, multiKey2);
+-    }
++        assertEquals("Expected multiKeys with identical keys to be equal", multiKey1, multiKey2);
+     
+-    @Test
+-    public void testEqualsDifferentSize() {
+-        String[] keys1 = {"key1", "key2", "key3"};
+-        String[] keys2 = {"key1", "key2"};
+-        MultiKey<String> multiKey1 = new MultiKey<>(keys1);
+-        MultiKey<String> multiKey2 = new MultiKey<>(keys2);
+-        assertNotEquals(multiKey1, multiKey2);
+-    }
++        keys1 = new String[]{"key1", "key2", "key3"};
++        keys2 = new String[]{"key1", "key2"};
++        multiKey1 = new MultiKey<>(keys1);
++        multiKey2 = new MultiKey<>(keys2);
++        assertNotEquals("Expected multiKeys with different sizes not to be equal", multiKey1, multiKey2);
+     
+-    @Test
+-    public void testEqualsDifferentKeys() {
+-        String[] keys1 = {"key1", "key2", "key3"};
+-        String[] keys2 = {"key1", "key2", "key4"};
+-        MultiKey<String> multiKey1 = new MultiKey<>(keys1);
+-        MultiKey<String> multiKey2 = new MultiKey<>(keys2);
+-        assertNotEquals(multiKey1, multiKey2);
+-    }
++        keys1 = new String[]{"key1", "key2", "key3"};
++        keys2 = new String[]{"key1", "key2", "key4"};
++        multiKey1 = new MultiKey<>(keys1);
++        multiKey2 = new MultiKey<>(keys2);
++        assertNotEquals("Expected multiKeys with different keys not to be equal", multiKey1, multiKey2);
+     
+-    @Test
+-    public void testHashCodeSameObject() {
+-        String[] keys = {"key1", "key2", "key3"};
+-        MultiKey<String> multiKey = new MultiKey<>(keys);
++        keys = new String[]{"key1", "key2", "key3"};
++        multiKey = new MultiKey<>(keys);
+         int hashCode = multiKey.hashCode();
+-        assertEquals(hashCode, multiKey.hashCode());
+-    }
++        assertEquals("Expected hashCode to remain consistent across calls", hashCode, multiKey.hashCode());
+     
+-    @Test
+-    public void testToString() {
+-        String[] keys = {"key1", "key2", "key3"};
+-        MultiKey<String> multiKey = new MultiKey<>(keys);
+-        assertNotNull(multiKey);
+-        assertEquals("MultiKey[key1, key2, key3]", multiKey.toString());
++        keys = new String[]{"key1", "key2", "key3"};
++        multiKey = new MultiKey<>(keys);
++        assertNotNull("Expected multiKey instance not to be null", multiKey);
++        assertEquals("Expected toString representation to match expected format", "MultiKey[key1, key2, key3]", multiKey.toString());
+     }
+ }
+
+--- a/R08_ArchiveStreamFactoryTest\test\org\apache\commons\compress\archivers\ArchiveStreamFactoryTest.java
++++ b/R08_ArchiveStreamFactoryTest\test\org\apache\commons\compress\archivers\ArchiveStreamFactoryTest.java
+@@ -19,82 +19,70 @@
+ public class ArchiveStreamFactoryTest {
+ 
+     @Test
+-    public void testCreateArchiveInputStreamWithNullArchiverName() {
++    public void testCreateArchiveInputStreamWithString() {
+         InputStream inputStream = new ByteArrayInputStream("test".getBytes());
+         ArchiveStreamFactory factory = new ArchiveStreamFactory();
+         
+         try {
+             factory.createArchiveInputStream(null, inputStream);
+         } catch (IllegalArgumentException e) {
+-            assertEquals("Archivername must not be null.", e.getMessage());
++            assertEquals("Expected exception message for null archiver name", "Archivername must not be null.", e.getMessage());
+         } catch (Exception e) {
+             assertNull("Expected IllegalArgumentException", e.getMessage());
++        }
++
++        factory = new ArchiveStreamFactory();
++        
++        try {
++            factory.createArchiveInputStream(ArchiveStreamFactory.ZIP, null);
++        } catch (IllegalArgumentException e) {
++            assertEquals("Expected exception message for null input stream", "InputStream must not be null.", e.getMessage());
++        } catch (Exception e) {
++            assertNull("Expected IllegalArgumentException", e.getMessage());
++        }
++
++        inputStream = new ByteArrayInputStream("test".getBytes());
++        factory = new ArchiveStreamFactory();
++        
++        try {
++            factory.createArchiveInputStream("unknown", inputStream);
++        } catch (ArchiveException e) {
++            assertEquals("Expected exception message for unknown archiver name", "Archiver: unknown not found.", e.getMessage());
++        } catch (Exception e) {
++            assertNull("Expected ArchiveException", e.getMessage());
+         }
+     }
+ 
+     @Test
+-    public void testCreateArchiveInputStreamWithNullInputStream() {
+-        ArchiveStreamFactory factory = new ArchiveStreamFactory();
+-        
+-        try {
+-            factory.createArchiveInputStream(ArchiveStreamFactory.ZIP, null);
+-        } catch (IllegalArgumentException e) {
+-            assertEquals("InputStream must not be null.", e.getMessage());
+-        } catch (Exception e) {
+-            assertNull("Expected IllegalArgumentException", e.getMessage());
+-        }
+-    }
+-
+-    @Test
+-    public void testCreateArchiveOutputStreamWithNullArchiverName() {
++    public void testCreateArchiveOutputStreamWithString() {
+         OutputStream outputStream = new ByteArrayOutputStream();
+         ArchiveStreamFactory factory = new ArchiveStreamFactory();
+         
+         try {
+             factory.createArchiveOutputStream(null, outputStream);
+         } catch (IllegalArgumentException e) {
+-            assertEquals("Archivername must not be null.", e.getMessage());
++            assertEquals("Expected exception message for null archiver name in output stream", "Archivername must not be null.", e.getMessage());
+         } catch (Exception e) {
+             assertNull("Expected IllegalArgumentException", e.getMessage());
+         }
+-    }
+ 
+-    @Test
+-    public void testCreateArchiveOutputStreamWithNullOutputStream() {
+-        ArchiveStreamFactory factory = new ArchiveStreamFactory();
++        factory = new ArchiveStreamFactory();
+         
+         try {
+             factory.createArchiveOutputStream(ArchiveStreamFactory.ZIP, null);
+         } catch (IllegalArgumentException e) {
+-            assertEquals("OutputStream must not be null.", e.getMessage());
++            assertEquals("Expected exception message for null output stream", "OutputStream must not be null.", e.getMessage());
+         } catch (Exception e) {
+             assertNull("Expected IllegalArgumentException", e.getMessage());
+         }
+-    }
+ 
+-    @Test
+-    public void testCreateArchiveInputStreamWithUnknownArchiverName() {
+-        InputStream inputStream = new ByteArrayInputStream("test".getBytes());
+-        ArchiveStreamFactory factory = new ArchiveStreamFactory();
+-        
+-        try {
+-            factory.createArchiveInputStream("unknown", inputStream);
+-        } catch (ArchiveException e) {
+-            assertEquals("Archiver: unknown not found.", e.getMessage());
+-        } catch (Exception e) {
+-            assertNull("Expected ArchiveException", e.getMessage());
+-        }
+-    }
+-
+-    @Test
+-    public void testCreateArchiveOutputStreamWithUnknownArchiverName() {
+-        OutputStream outputStream = new ByteArrayOutputStream();
+-        ArchiveStreamFactory factory = new ArchiveStreamFactory();
++        outputStream = new ByteArrayOutputStream();
++        factory = new ArchiveStreamFactory();
+         
+         try {
+             factory.createArchiveOutputStream("unknown", outputStream);
+         } catch (ArchiveException e) {
+-            assertEquals("Archiver: unknown not found.", e.getMessage());
++            assertEquals("Expected exception message for unknown output archiver name", "Archiver: unknown not found.", e.getMessage());
+         } catch (Exception e) {
+             assertNull("Expected ArchiveException", e.getMessage());
+         }
+@@ -108,30 +96,24 @@
+         
+         try {
+             ArchiveInputStream archiveInputStream = factory.createArchiveInputStream(inputStream);
+-            assertNotNull(archiveInputStream);
++            assertNotNull("Expected archive input stream not to be null", archiveInputStream);
+         } catch (ArchiveException e) {
+             assertNull("Expected no exception", e.getMessage());
+         }
+-    }
+ 
+-    @Test
+-    public void testCreateArchiveInputStreamAutoDetectNoArchiveFound() {
+-        byte[] data = new byte[] {0, 0, 0, 0}; // Invalid signature
+-        InputStream inputStream = new ByteArrayInputStream(data);
+-        ArchiveStreamFactory factory = new ArchiveStreamFactory();
++        data = new byte[] {0, 0, 0, 0}; // Invalid signature
++        inputStream = new ByteArrayInputStream(data);
++        factory = new ArchiveStreamFactory();
+         
+         try {
+             factory.createArchiveInputStream(inputStream);
+         } catch (ArchiveException e) {
+-            assertEquals("No Archiver found for the stream signature", e.getMessage());
++            assertEquals("Expected exception message for no archiver found", "No Archiver found for the stream signature", e.getMessage());
+         } catch (Exception e) {
+             assertNull("Expected ArchiveException", e.getMessage());
+         }
+-    }
+ 
+-    @Test
+-    public void testCreateArchiveInputStreamAutoDetectWithUnsupportedMark() {
+-        InputStream inputStream = new InputStream() {
++        inputStream = new InputStream() {
+             @Override
+             public int read() throws IOException {
+                 return 0;
+@@ -142,12 +124,12 @@
+                 return false;
+             }
+         };
+-        ArchiveStreamFactory factory = new ArchiveStreamFactory();
++        factory = new ArchiveStreamFactory();
+         
+         try {
+             factory.createArchiveInputStream(inputStream);
+         } catch (IllegalArgumentException e) {
+-            assertEquals("Mark is not supported.", e.getMessage());
++            assertEquals("Expected exception message for unsupported mark", "Mark is not supported.", e.getMessage());
+         } catch (Exception e) {
+             assertNull("Expected IllegalArgumentException", e.getMessage());
+         }
+
+--- a/R09_CSVRecordTest\test\org\apache\commons\csv\CSVRecordTest.java
++++ b/R09_CSVRecordTest\test\org\apache\commons\csv\CSVRecordTest.java
+@@ -5,29 +5,25 @@
+ 
+ public class CSVRecordTest {
+ 
+-    // Test case for get(int i)
++    // Test case for get(int i) and get(String name)
+     @Test
+-    public void testGetByIndex() {
++    public void testGet() {
+         String[] values = {"1", "2", "3"};
+         Map<String, Integer> mapping = new HashMap<>();
+         CSVRecord record = new CSVRecord(values, mapping, null, 1);
+ 
+-        assertEquals("1", record.get(0));
+-        assertEquals("2", record.get(1));
+-        assertEquals("3", record.get(2));
+-    }
++        assertEquals("Expected value at index 0 to be '1'", "1", record.get(0));
++        assertEquals("Expected value at index 1 to be '2'", "2", record.get(1));
++        assertEquals("Expected value at index 2 to be '3'", "3", record.get(2));
+ 
+-    // Test case for get(String name) with header mapping provided
+-    @Test
+-    public void testGetByNameWithMapping() {
+-        String[] values = {"John", "Doe"};
+-        Map<String, Integer> mapping = new HashMap<>();
+-        mapping.put("firstName", 0);
+-        mapping.put("lastName", 1);
+-        CSVRecord record = new CSVRecord(values, mapping, null, 1);
++        String[] valuesNamed = {"John", "Doe"};
++        Map<String, Integer> mappingNamed = new HashMap<>();
++        mappingNamed.put("firstName", 0);
++        mappingNamed.put("lastName", 1);
++        CSVRecord recordNamed = new CSVRecord(valuesNamed, mappingNamed, null, 1);
+ 
+-        assertEquals("John", record.get("firstName"));
+-        assertEquals("Doe", record.get("lastName"));
++        assertEquals("Expected value for key 'firstName' to be 'John'", "John", recordNamed.get("firstName"));
++        assertEquals("Expected value for key 'lastName' to be 'Doe'", "Doe", recordNamed.get("lastName"));
+     }
+ 
+     // Test case for get(String name) without header mapping provided
+@@ -39,84 +35,62 @@
+         record.get("firstName");
+     }
+ 
+-    // Test case for isConsistent() with header mapping provided
++    // Test case for isConsistent()
+     @Test
+-    public void testIsConsistentWithMapping() {
++    public void testIsConsistent() {
+         String[] values = {"John", "Doe"};
+         Map<String, Integer> mapping = new HashMap<>();
+         mapping.put("firstName", 0);
+         mapping.put("lastName", 1);
+         CSVRecord record = new CSVRecord(values, mapping, null, 1);
+ 
+-        assertTrue(record.isConsistent());
++        assertTrue("Expected record with consistent mapping to be consistent", record.isConsistent());
++
++        CSVRecord recordWithoutMapping = new CSVRecord(values, null, null, 1);
++
++        assertTrue("Expected record without mapping to be consistent", recordWithoutMapping.isConsistent());
+     }
+ 
+-    // Test case for isConsistent() without header mapping provided
++    // Test case for isMapped(String name)
+     @Test
+-    public void testIsConsistentWithoutMapping() {
+-        String[] values = {"John", "Doe"};
+-        CSVRecord record = new CSVRecord(values, null, null, 1);
+-
+-        assertTrue(record.isConsistent());
+-    }
+-
+-    // Test case for isMapped(String name) with header mapping provided
+-    @Test
+-    public void testIsMappedWithMapping() {
++    public void testIsMapped() {
+         String[] values = {"John", "Doe"};
+         Map<String, Integer> mapping = new HashMap<>();
+         mapping.put("firstName", 0);
+         mapping.put("lastName", 1);
+         CSVRecord record = new CSVRecord(values, mapping, null, 1);
+ 
+-        assertTrue(record.isMapped("firstName"));
+-        assertTrue(record.isMapped("lastName"));
++        assertTrue("Expected 'firstName' to be mapped", record.isMapped("firstName"));
++        assertTrue("Expected 'lastName' to be mapped", record.isMapped("lastName"));
++
++        CSVRecord recordWithoutMapping = new CSVRecord(values, null, null, 1);
++
++        assertFalse("Expected 'firstName' not to be mapped when mapping is null", recordWithoutMapping.isMapped("firstName"));
++        assertFalse("Expected 'lastName' not to be mapped when mapping is null", recordWithoutMapping.isMapped("lastName"));
+     }
+ 
+-    // Test case for isMapped(String name) without header mapping provided
++    // Test case for isSet(String name)
+     @Test
+-    public void testIsMappedWithoutMapping() {
+-        String[] values = {"John", "Doe"};
+-        CSVRecord record = new CSVRecord(values, null, null, 1);
+-
+-        assertFalse(record.isMapped("firstName"));
+-        assertFalse(record.isMapped("lastName"));
+-    }
+-
+-    // Test case for isSet(String name) with header mapping provided and value present
+-    @Test
+-    public void testIsSetWithMappingAndValuePresent() {
++    public void testIsSet() {
+         String[] values = {"John", "Doe"};
+         Map<String, Integer> mapping = new HashMap<>();
+         mapping.put("firstName", 0);
+         mapping.put("lastName", 1);
+         CSVRecord record = new CSVRecord(values, mapping, null, 1);
+ 
+-        assertTrue(record.isSet("firstName"));
+-        assertTrue(record.isSet("lastName"));
+-    }
++        assertTrue("Expected 'firstName' to be set", record.isSet("firstName"));
++        assertTrue("Expected 'lastName' to be set", record.isSet("lastName"));
+ 
+-    // Test case for isSet(String name) with header mapping provided and value not present
+-    @Test
+-    public void testIsSetWithMappingAndValueNotPresent() {
+-        String[] values = {"John"};
+-        Map<String, Integer> mapping = new HashMap<>();
+-        mapping.put("firstName", 0);
+-        mapping.put("lastName", 1);
+-        CSVRecord record = new CSVRecord(values, mapping, null, 1);
++        String[] valuesPartial = {"John"};
++        CSVRecord recordPartial = new CSVRecord(valuesPartial, mapping, null, 1);
+ 
+-        assertTrue(record.isSet("firstName"));
+-        assertFalse(record.isSet("lastName"));
+-    }
++        assertTrue("Expected 'firstName' to be set in partial record", recordPartial.isSet("firstName"));
++        assertFalse("Expected 'lastName' not to be set when value is missing", recordPartial.isSet("lastName"));
+ 
+-    // Test case for isSet(String name) without header mapping provided
+-    @Test
+-    public void testIsSetWithoutMapping() {
+-        String[] values = {"John", "Doe"};
+-        CSVRecord record = new CSVRecord(values, null, null, 1);
++        CSVRecord recordWithoutMapping = new CSVRecord(values, null, null, 1);
+ 
+-        assertFalse(record.isSet("firstName"));
+-        assertFalse(record.isSet("lastName"));
++        assertFalse("Expected 'firstName' not to be set when mapping is null", recordWithoutMapping.isSet("firstName"));
++        assertFalse("Expected 'lastName' not to be set when mapping is null", recordWithoutMapping.isSet("lastName"));
+     }
+ 
+     // Test case for iterator()
+@@ -126,13 +100,13 @@
+         CSVRecord record = new CSVRecord(values, null, null, 1);
+ 
+         Iterator<String> it = record.iterator();
+-        assertTrue(it.hasNext());
+-        assertEquals("1", it.next());
+-        assertTrue(it.hasNext());
+-        assertEquals("2", it.next());
+-        assertTrue(it.hasNext());
+-        assertEquals("3", it.next());
+-        assertFalse(it.hasNext());
++        assertTrue("Expected iterator to have next element before first item", it.hasNext());
++        assertEquals("Expected first iterated value to be '1'", "1", it.next());
++        assertTrue("Expected iterator to have next element before second item", it.hasNext());
++        assertEquals("Expected second iterated value to be '2'", "2", it.next());
++        assertTrue("Expected iterator to have next element before third item", it.hasNext());
++        assertEquals("Expected third iterated value to be '3'", "3", it.next());
++        assertFalse("Expected iterator not to have further elements", it.hasNext());
+     }
+ 
+     // Test case for values()
+@@ -141,7 +115,7 @@
+         String[] values = {"1", "2", "3"};
+         CSVRecord record = new CSVRecord(values, null, null, 1);
+ 
+-        assertArrayEquals(new String[]{"1", "2", "3"}, record.values());
++        assertArrayEquals("Expected values array to match original array", new String[]{"1", "2", "3"}, record.values());
+     }
+ 
+     // Test case for getComment()
+@@ -150,7 +124,7 @@
+         String[] values = {"John", "Doe"};
+         CSVRecord record = new CSVRecord(values, null, "This is a comment.", 1);
+ 
+-        assertEquals("This is a comment.", record.getComment());
++        assertEquals("Expected comment to match expected string", "This is a comment.", record.getComment());
+     }
+ 
+     // Test case for getRecordNumber()
+@@ -159,7 +133,7 @@
+         String[] values = {"John", "Doe"};
+         CSVRecord record = new CSVRecord(values, null, null, 10);
+ 
+-        assertEquals(10, record.getRecordNumber());
++        assertEquals("Expected record number to be 10", 10, record.getRecordNumber());
+     }
+ 
+     // Test case for size()
+@@ -168,7 +142,7 @@
+         String[] values = {"John", "Doe"};
+         CSVRecord record = new CSVRecord(values, null, null, 1);
+ 
+-        assertEquals(2, record.size());
++        assertEquals("Expected record size to be 2", 2, record.size());
+     }
+ 
+     // Test case for toString()
+@@ -177,7 +151,7 @@
+         String[] values = {"John", "Doe"};
+         CSVRecord record = new CSVRecord(values, null, null, 1);
+ 
+-        assertEquals("[John, Doe]", record.toString());
++        assertEquals("Expected toString representation to match expected string", "[John, Doe]", record.toString());
+     }
+ 
+ }
+
+--- a/R10_NodeTest\test\org\jsoup\nodes\NodeTest.java
++++ b/R10_NodeTest\test\org\jsoup\nodes\NodeTest.java
+@@ -5,115 +5,84 @@
+ 
+ public class NodeTest {
+     @Test
+-    public void testNodeName() {
++    public void testNode() {
+         Node node = new TestNode();
+-        Assert.assertEquals("TestNode", node.nodeName());
+-    }
++        Assert.assertEquals("Expected nodeName() to return 'TestNode'", "TestNode", node.nodeName());
+     
+-    @Test
+-    public void testAttr() {
+-        Node node = new TestNode();
+         node.attr("key1", "value1");
+         node.attr("key2", "value2");
+         
+-        Assert.assertEquals("value1", node.attr("key1"));
+-        Assert.assertEquals("value2", node.attr("key2"));
+-        Assert.assertEquals("", node.attr("key3"));
+-    }
++        Assert.assertEquals("Expected attr('key1') to return 'value1'", "value1", node.attr("key1"));
++        Assert.assertEquals("Expected attr('key2') to return 'value2'", "value2", node.attr("key2"));
++        Assert.assertEquals("Expected attr('key3') for non-existent attribute to return empty string", "", node.attr("key3"));
+     
+-    @Test
+-    public void testHasAttr() {
+-        Node node = new TestNode();
++        node = new TestNode();
+         node.attr("key1", "value1");
+         
+-        Assert.assertTrue(node.hasAttr("key1"));
+-        Assert.assertFalse(node.hasAttr("key2"));
+-    }
++        Assert.assertTrue("Expected hasAttr('key1') to return true for existing attribute", node.hasAttr("key1"));
++        Assert.assertFalse("Expected hasAttr('key2') to return false for non-existing attribute", node.hasAttr("key2"));
+     
+-    @Test
+-    public void testRemoveAttr() {
+-        Node node = new TestNode();
++        node = new TestNode();
+         node.attr("key1", "value1");
+         node.attr("key2", "value2");
+         
+         node.removeAttr("key1");
+-        Assert.assertFalse(node.hasAttr("key1"));
+-        Assert.assertTrue(node.hasAttr("key2"));
+-    }
++        Assert.assertFalse("Expected hasAttr('key1') to return false after removeAttr()", node.hasAttr("key1"));
++        Assert.assertTrue("Expected hasAttr('key2') to remain true after removing key1", node.hasAttr("key2"));
+     
+-    @Test
+-    public void testBaseUri() {
+-        Node node = new TestNode();
++        node = new TestNode();
+         node.setBaseUri("http://example.com");
+         
+-        Assert.assertEquals("http://example.com", node.baseUri());
+-    }
++        Assert.assertEquals("Expected baseUri() to match configured base URI", "http://example.com", node.baseUri());
+     
+-    @Test
+-    public void testAbsUrl() {
+-        Node node = new TestNode();
++        node = new TestNode();
+         node.setBaseUri("http://example.com");
+         node.attr("href", "/page.html");
+         
+-        Assert.assertEquals("http://example.com/page.html", node.absUrl("href"));
+-        Assert.assertEquals("", node.absUrl("invalidAttr"));
+-    }
++        Assert.assertEquals("Expected absUrl('href') to resolve relative URL correctly", "http://example.com/page.html", node.absUrl("href"));
++        Assert.assertEquals("Expected absUrl('invalidAttr') for missing attribute to return empty string", "", node.absUrl("invalidAttr"));
+     
+-    @Test
+-    public void testChildNode() {
+-        Node node = new TestNode();
++        node = new TestNode();
+         Node childNode1 = new TestNode();
+         Node childNode2 = new TestNode();
+         
+         node.addChildren(childNode1, childNode2);
+         
+-        Assert.assertEquals(childNode1, node.childNode(0));
+-        Assert.assertEquals(childNode2, node.childNode(1));
+-    }
++        Assert.assertEquals("Expected childNode(0) to return childNode1", childNode1, node.childNode(0));
++        Assert.assertEquals("Expected childNode(1) to return childNode2", childNode2, node.childNode(1));
+     
+-    @Test
+-    public void testChildNodes() {
+-        Node node = new TestNode();
+-        Node childNode1 = new TestNode();
+-        Node childNode2 = new TestNode();
++        node = new TestNode();
++        Node childNode3 = new TestNode();
++        Node childNode4 = new TestNode();
+         
+-        node.addChildren(childNode1, childNode2);
++        node.addChildren(childNode3, childNode4);
+         
+-        Assert.assertEquals(2, node.childNodes().size());
+-    }
++        Assert.assertEquals("Expected childNodes().size() to be 2", 2, node.childNodes().size());
+     
+-    @Test
+-    public void testParent() {
+         Node parentNode = new TestNode();
+         Node childNode = new TestNode();
+         parentNode.addChildren(childNode);
+         
+-        Assert.assertEquals(parentNode, childNode.parent());
+-    }
++        Assert.assertEquals("Expected childNode.parent() to return parentNode", parentNode, childNode.parent());
+     
+-    @Test
+-    public void testRemove() {
+-        Node parentNode = new TestNode();
+-        Node childNode = new TestNode();
++        parentNode = new TestNode();
++        childNode = new TestNode();
+         parentNode.addChildren(childNode);
+         
+         childNode.remove();
+-        Assert.assertEquals(0, parentNode.childNodes().size());
+-        Assert.assertNull(childNode.parent());
+-    }
++        Assert.assertEquals("Expected parentNode childNodes size to be 0 after child removal", 0, parentNode.childNodes().size());
++        Assert.assertNull("Expected removed childNode parent to be null", childNode.parent());
+     
+-    @Test
+-    public void testReplaceWith() {
+-        Node parentNode = new TestNode();
+-        Node childNode1 = new TestNode();
+-        Node childNode2 = new TestNode();
+-        parentNode.addChildren(childNode1);
++        parentNode = new TestNode();
++        Node childNode1_rep = new TestNode();
++        Node childNode2_rep = new TestNode();
++        parentNode.addChildren(childNode1_rep);
+         
+-        childNode1.replaceWith(childNode2);
+-        Assert.assertEquals(1, parentNode.childNodes().size());
+-        Assert.assertNull(childNode1.parent());
+-        Assert.assertEquals(parentNode, childNode2.parent());
+-        Assert.assertEquals(childNode2, parentNode.childNode(0));
++        childNode1_rep.replaceWith(childNode2_rep);
++        Assert.assertEquals("Expected parentNode childNodes size to be 1 after replacement", 1, parentNode.childNodes().size());
++        Assert.assertNull("Expected replaced childNode1 parent to be null", childNode1_rep.parent());
++        Assert.assertEquals("Expected replacing childNode2 parent to be parentNode", parentNode, childNode2_rep.parent());
++        Assert.assertEquals("Expected parentNode childNode(0) to be childNode2", childNode2_rep, parentNode.childNode(0));
+     }
+     
+     private static class TestNode extends Node {
+
