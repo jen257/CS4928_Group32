@@ -1,26 +1,11 @@
 # Data Verification Report — Defects4J / TsDetect
 
-> **Read-only GitHub version** of the Excel verification workbook. All reported values and notes below are sourced from the uploaded workbook. This Markdown is static and does not recalculate Excel formulas.
-
-## Prevalence Comparison
-
-| Generator | Test Smell | Total Samples | Positive Samples | Paper Prevalence (%) | Our Prevalence (%) | Deviation (pp) | Result |
-| --- | --- | --- | --- | --- | --- | --- | --- |
-| GPT-3.5 | AR | 9,760 | 4,581 | 46.94 | 46.94 | 0.00 | PASS |
-| GPT-3.5 | LT | 9,760 | 4,750 | 48.67 | 48.67 | 0.00 | PASS |
-| EvoSuite | AR | 4,346 | 1,662 | 38.24 | 38.24 | 0.00 | PASS |
-| EvoSuite | LT | 4,346 | 3,344 | 82.18 | 76.94 | 5.24 | PASS |
-
-**Decision rule:** Absolute deviation = |Paper prevalence − Our prevalence|, measured in percentage points (pp). A result passes when deviation is **≤ 15 pp**.
-
-**Main observation:** EvoSuite Lazy Test (LT) is **76.94%** in the CSV-derived results versus **82.18%** in the paper: a **5.24 pp** difference. Its cause remains unknown.
-
 ## 1. Data Sources
 
 | Field | Details |
 | --- | --- |
 | Research Paper | On the Diffusion of Test Smells in LLM-Generated Unit Tests |
-| Reference Table | Appendix A, Table 17(a) - TsDetect |
+| Reference Table | Appendix A, Table 17(a) — TsDetect |
 | Dataset | Defects4J |
 | Detection Tool | TsDetect |
 | GPT-3.5 CSV | GPT_Merged_Results.csv |
@@ -35,42 +20,30 @@
 | Dataset Filter | Only Defects4J records were included. |
 | Positive Case Rule | A sample is positive if the detected AR or LT occurrence count is greater than 0. |
 | Prevalence Formula | (Positive Samples / Total Samples) × 100 |
-| GPT-3.5 Samples | 9,760 |
-| EvoSuite Samples | 4,346 |
+| Deviation Threshold | 15 percentage points |
+| Decision Rule | Non-reproduction if the deviation exceeds 15 percentage points. |
 
-## 3. Data Quality Checks
+## 3. Reproduction Comparison
 
-| Field | Details |
-| --- | --- |
-| Zero-Method Records | 13 GPT-3.5 records have NumberOfMethods = 0. |
-| Primary Denominator | All 9,760 qualifying GPT-3.5 records were retained for the main comparison. |
-| Alternative Denominator | Excluding the 13 records leaves 9,747 samples. |
-| Sensitivity Analysis | With 9,747 samples, AR prevalence is 47.00% and LT prevalence is 48.73%. |
-| Methodology Note | The paper does not explicitly specify how zero-method records should be handled. |
-| Duplicate Records | No exact duplicate rows or repeated TestFilePath values were found in the filtered Defects4J data. |
-| Missing Values | No missing values were found in TestFilePath, NumberOfMethods, AR, or LT. |
-| Empty Path Fields | RelativeTestFilePath and RelativeProductionFilePath are empty but do not affect the prevalence calculations. |
-| Numeric Validation | All NumberOfMethods, AR, and LT values are non-negative integers. |
+| Generator | Test Smell | Paper Prevalence (%) | Local Prevalence (%) | Deviation (pp) | Result |
+| --- | --- | ---: | ---: | ---: | --- |
+| GPT-3.5 | AR | 46.94 | 9.39 | 37.55 | **FAIL** |
+| GPT-3.5 | LT | 48.67 | 0.00 | 48.67 | **FAIL** |
+| EvoSuite | AR | 38.24 | 38.24 | 0.00 | **PASS** |
+| EvoSuite | LT | 82.18 | 76.94 | 5.24 | **PASS** |
+
+**Comparison Summary:** GPT-3.5 failed both comparisons, while EvoSuite passed both comparisons.
+
+**Maximum Deviation:** 48.67 percentage points (GPT-3.5 LT).
+
+**Overall Result:** **NON-REPRODUCTION**.
 
 ## 4. Verification Conclusion
 
 | Field | Details |
 | --- | --- |
-| GPT-3.5 Results | AR = 46.94% and LT = 48.67%. Both match the values reported in Table 17(a). |
-| EvoSuite Results | AR = 38.24%, matching the paper. LT = 76.94%, compared with 82.18% in the paper. |
-| Maximum Deviation | 5.24 percentage points (EvoSuite LT). |
-| Verification Result | All four prevalence values are within the predefined 15-percentage-point threshold. |
-| Limitation | The cause of the EvoSuite LT discrepancy remains unknown. |
-
-## Calculation Reference
-
-The prevalence rule recorded in the workbook is **positive samples / total samples × 100**; a positive sample has a detected AR or LT occurrence count **greater than 0**.
-
-| Generator / smell | Calculation | Prevalence (%) |
-| --- | --- | --- |
-| GPT-3.5 / AR | 4,581 / 9,760 × 100 | 46.94 |
-| GPT-3.5 / LT | 4,750 / 9,760 × 100 | 48.67 |
-| EvoSuite / AR | 1,662 / 4,346 × 100 | 38.24 |
-| EvoSuite / LT | 3,344 / 4,346 × 100 | 76.94 |
-
-For live Excel formulas and the embedded reference-table image, consult the [original verification workbook](./CS4928_Data_Verification.xlsx). The raw CSVs and detector execution logs are not embedded in this Markdown file.
+| GPT-3.5 Results | AR = 9.39% and LT = 0.00%. Both exceed the predefined 15-percentage-point deviation threshold. |
+| EvoSuite Results | AR = 38.24% and LT = 76.94%. Both are within the predefined threshold. |
+| Maximum Deviation | 48.67 percentage points (GPT-3.5 LT). |
+| Reproduction Result | **NON-REPRODUCTION:** GPT-3.5 failed to reproduce the paper's reported AR and LT prevalence, while EvoSuite met the reproduction threshold. |
+| Final Conclusion | The overall reproduction was unsuccessful because the GPT-3.5 results exceeded the predefined 15-percentage-point threshold. |
