@@ -1,0 +1,211 @@
+﻿generator_family,generator_model,dataset,smell,successful_outputs,flagged_records,count_sum,prevalence_percent
+evosuite,,Defects4J,Assertion Roulette,4346,1662,12795,38.242061665899676
+evosuite,,Defects4J,Conditional Test Logic,4346,0,0,0.0
+evosuite,,Defects4J,Constructor Initialization,4346,0,0,0.0
+evosuite,,Defects4J,Default Test,4346,0,0,0.0
+evosuite,,Defects4J,EmptyTest,4346,300,300,6.902899217671422
+evosuite,,Defects4J,Exception Catching Throwing,4346,4046,74980,93.09710078232858
+evosuite,,Defects4J,General Fixture,4346,0,0,0.0
+evosuite,,Defects4J,Mystery Guest,4346,193,242,4.440865163368615
+evosuite,,Defects4J,Print Statement,4346,0,0,0.0
+evosuite,,Defects4J,Redundant Assertion,4346,0,0,0.0
+evosuite,,Defects4J,Sensitive Equality,4346,762,3215,17.53336401288541
+evosuite,,Defects4J,Verbose Test,4346,0,0,0.0
+evosuite,,Defects4J,Sleepy Test,4346,0,0,0.0
+evosuite,,Defects4J,Eager Test,4346,2376,27021,54.67096180395766
+evosuite,,Defects4J,Lazy Test,4346,3344,103511,76.94431661297745
+evosuite,,Defects4J,Duplicate Assert,4346,3,10,0.06902899217671422
+evosuite,,Defects4J,Unknown Test,4346,300,300,6.902899217671422
+evosuite,,Defects4J,IgnoredTest,4346,0,0,0.0
+evosuite,,Defects4J,Resource Optimism,4346,172,218,3.9576622181316155
+evosuite,,Defects4J,Magic Number Test,4346,4346,75280,100.0
+evosuite,,Defects4J,Dependent Test,4346,0,0,0.0
+evosuite,,SF110,Assertion Roulette,6062,3078,48916,50.775321676014514
+evosuite,,SF110,Conditional Test Logic,6062,0,0,0.0
+evosuite,,SF110,Constructor Initialization,6062,0,0,0.0
+evosuite,,SF110,Default Test,6062,0,0,0.0
+evosuite,,SF110,EmptyTest,6062,23,23,0.3794127350709337
+evosuite,,SF110,Exception Catching Throwing,6062,6039,201071,99.62058726492907
+evosuite,,SF110,General Fixture,6062,0,0,0.0
+evosuite,,SF110,Mystery Guest,6062,264,787,4.354998350379413
+evosuite,,SF110,Print Statement,6062,0,0,0.0
+evosuite,,SF110,Redundant Assertion,6062,0,0,0.0
+evosuite,,SF110,Sensitive Equality,6062,649,5152,10.70603761134939
+evosuite,,SF110,Verbose Test,6062,0,0,0.0
+evosuite,,SF110,Sleepy Test,6062,0,0,0.0
+evosuite,,SF110,Eager Test,6062,3816,77100,62.94952161002969
+evosuite,,SF110,Lazy Test,6062,4982,469452,82.18409765753877
+evosuite,,SF110,Duplicate Assert,6062,408,8713,6.730451996040911
+evosuite,,SF110,Unknown Test,6062,23,23,0.3794127350709337
+evosuite,,SF110,IgnoredTest,6062,0,0,0.0
+evosuite,,SF110,Resource Optimism,6062,263,779,4.338502144506763
+evosuite,,SF110,Magic Number Test,6062,6062,201094,100.0
+evosuite,,SF110,Dependent Test,6062,0,0,0.0
+llm,GPT3,Defects4J,Assertion Roulette,9760,4581,20516,46.93647540983606
+llm,GPT3,Defects4J,Conditional Test Logic,9760,327,828,3.3504098360655736
+llm,GPT3,Defects4J,Constructor Initialization,9760,10,10,0.10245901639344263
+llm,GPT3,Defects4J,Default Test,9760,0,0,0.0
+llm,GPT3,Defects4J,EmptyTest,9760,3088,27858,31.639344262295083
+llm,GPT3,Defects4J,Exception Catching Throwing,9760,1880,7366,19.262295081967213
+llm,GPT3,Defects4J,General Fixture,9760,446,2758,4.569672131147541
+llm,GPT3,Defects4J,Mystery Guest,9760,87,146,0.8913934426229508
+llm,GPT3,Defects4J,Print Statement,9760,0,0,0.0
+llm,GPT3,Defects4J,Redundant Assertion,9760,105,323,1.0758196721311475
+llm,GPT3,Defects4J,Sensitive Equality,9760,1833,3434,18.78073770491803
+llm,GPT3,Defects4J,Verbose Test,9760,0,0,0.0
+llm,GPT3,Defects4J,Sleepy Test,9760,63,145,0.6454918032786885
+llm,GPT3,Defects4J,Eager Test,9760,4017,21981,41.157786885245905
+llm,GPT3,Defects4J,Lazy Test,9760,4750,64622,48.66803278688525
+llm,GPT3,Defects4J,Duplicate Assert,9760,680,1391,6.967213114754099
+llm,GPT3,Defects4J,Unknown Test,9760,3432,29697,35.16393442622951
+llm,GPT3,Defects4J,IgnoredTest,9760,0,0,0.0
+llm,GPT3,Defects4J,Resource Optimism,9760,99,170,1.014344262295082
+llm,GPT3,Defects4J,Magic Number Test,9760,9739,84916,99.78483606557377
+llm,GPT3,Defects4J,Dependent Test,9760,0,0,0.0
+llm,GPT3,NEWDATASET,Assertion Roulette,726,124,363,17.079889807162534
+llm,GPT3,NEWDATASET,Conditional Test Logic,726,1,4,0.13774104683195593
+llm,GPT3,NEWDATASET,Constructor Initialization,726,0,0,0.0
+llm,GPT3,NEWDATASET,Default Test,726,0,0,0.0
+llm,GPT3,NEWDATASET,EmptyTest,726,453,3305,62.396694214876035
+llm,GPT3,NEWDATASET,Exception Catching Throwing,726,93,144,12.809917355371901
+llm,GPT3,NEWDATASET,General Fixture,726,110,754,15.151515151515152
+llm,GPT3,NEWDATASET,Mystery Guest,726,0,0,0.0
+llm,GPT3,NEWDATASET,Print Statement,726,0,0,0.0
+llm,GPT3,NEWDATASET,Redundant Assertion,726,2,4,0.27548209366391185
+llm,GPT3,NEWDATASET,Sensitive Equality,726,6,10,0.8264462809917356
+llm,GPT3,NEWDATASET,Verbose Test,726,0,0,0.0
+llm,GPT3,NEWDATASET,Sleepy Test,726,0,0,0.0
+llm,GPT3,NEWDATASET,Eager Test,726,117,346,16.115702479338843
+llm,GPT3,NEWDATASET,Lazy Test,726,114,1144,15.702479338842975
+llm,GPT3,NEWDATASET,Duplicate Assert,726,1,1,0.13774104683195593
+llm,GPT3,NEWDATASET,Unknown Test,726,561,3575,77.27272727272727
+llm,GPT3,NEWDATASET,IgnoredTest,726,0,0,0.0
+llm,GPT3,NEWDATASET,Resource Optimism,726,0,0,0.0
+llm,GPT3,NEWDATASET,Magic Number Test,726,726,4288,100.0
+llm,GPT3,NEWDATASET,Dependent Test,726,0,0,0.0
+llm,GPT3,SF110,Assertion Roulette,6258,3037,9962,48.52988175135826
+llm,GPT3,SF110,Conditional Test Logic,6258,134,237,2.141259188239054
+llm,GPT3,SF110,Constructor Initialization,6258,4,4,0.06391818472355384
+llm,GPT3,SF110,Default Test,6258,0,0,0.0
+llm,GPT3,SF110,EmptyTest,6258,1124,9524,17.961009907318633
+llm,GPT3,SF110,Exception Catching Throwing,6258,808,2731,12.911473314157877
+llm,GPT3,SF110,General Fixture,6258,444,2183,7.094918504314477
+llm,GPT3,SF110,Mystery Guest,6258,153,410,2.444870565675935
+llm,GPT3,SF110,Print Statement,6258,3,6,0.04793863854266539
+llm,GPT3,SF110,Redundant Assertion,6258,124,200,1.9814637264301693
+llm,GPT3,SF110,Sensitive Equality,6258,1276,2097,20.389900926813677
+llm,GPT3,SF110,Verbose Test,6258,0,0,0.0
+llm,GPT3,SF110,Sleepy Test,6258,19,27,0.30361137743688077
+llm,GPT3,SF110,Eager Test,6258,3118,12500,49.82422499201023
+llm,GPT3,SF110,Lazy Test,6258,3237,36099,51.72579098753595
+llm,GPT3,SF110,Duplicate Assert,6258,526,1017,8.405241291147332
+llm,GPT3,SF110,Unknown Test,6258,1796,12208,28.69926494087568
+llm,GPT3,SF110,IgnoredTest,6258,1,1,0.01597954618088846
+llm,GPT3,SF110,Resource Optimism,6258,169,445,2.70054330457015
+llm,GPT3,SF110,Magic Number Test,6258,6245,48628,99.79226589964846
+llm,GPT3,SF110,Dependent Test,6258,0,0,0.0
+llm,GPT4,NEWDATASET,Assertion Roulette,421,96,235,22.802850356294538
+llm,GPT4,NEWDATASET,Conditional Test Logic,421,2,4,0.4750593824228028
+llm,GPT4,NEWDATASET,Constructor Initialization,421,0,0,0.0
+llm,GPT4,NEWDATASET,Default Test,421,0,0,0.0
+llm,GPT4,NEWDATASET,EmptyTest,421,116,557,27.553444180522565
+llm,GPT4,NEWDATASET,Exception Catching Throwing,421,84,240,19.95249406175772
+llm,GPT4,NEWDATASET,General Fixture,421,78,273,18.52731591448931
+llm,GPT4,NEWDATASET,Mystery Guest,421,0,0,0.0
+llm,GPT4,NEWDATASET,Print Statement,421,1,1,0.2375296912114014
+llm,GPT4,NEWDATASET,Redundant Assertion,421,2,3,0.4750593824228028
+llm,GPT4,NEWDATASET,Sensitive Equality,421,5,6,1.187648456057007
+llm,GPT4,NEWDATASET,Verbose Test,421,0,0,0.0
+llm,GPT4,NEWDATASET,Sleepy Test,421,0,0,0.0
+llm,GPT4,NEWDATASET,Eager Test,421,117,346,27.790973871733968
+llm,GPT4,NEWDATASET,Lazy Test,421,137,1001,32.541567695961994
+llm,GPT4,NEWDATASET,Duplicate Assert,421,2,2,0.4750593824228028
+llm,GPT4,NEWDATASET,Unknown Test,421,214,814,50.8313539192399
+llm,GPT4,NEWDATASET,IgnoredTest,421,1,1,0.2375296912114014
+llm,GPT4,NEWDATASET,Resource Optimism,421,0,0,0.0
+llm,GPT4,NEWDATASET,Magic Number Test,421,414,1905,98.3372921615202
+llm,GPT4,NEWDATASET,Dependent Test,421,0,0,0.0
+llm,Mistral7B,Defects4J,Assertion Roulette,1531,835,3597,54.53951665578054
+llm,Mistral7B,Defects4J,Conditional Test Logic,1531,130,415,8.491182233834095
+llm,Mistral7B,Defects4J,Constructor Initialization,1531,3,3,0.1959503592423253
+llm,Mistral7B,Defects4J,Default Test,1531,0,0,0.0
+llm,Mistral7B,Defects4J,EmptyTest,1531,89,840,5.81319399085565
+llm,Mistral7B,Defects4J,Exception Catching Throwing,1531,240,851,15.676028739386021
+llm,Mistral7B,Defects4J,General Fixture,1531,13,42,0.8491182233834096
+llm,Mistral7B,Defects4J,Mystery Guest,1531,3,5,0.1959503592423253
+llm,Mistral7B,Defects4J,Print Statement,1531,2,6,0.13063357282821686
+llm,Mistral7B,Defects4J,Redundant Assertion,1531,14,21,0.914435009797518
+llm,Mistral7B,Defects4J,Sensitive Equality,1531,199,845,12.998040496407576
+llm,Mistral7B,Defects4J,Verbose Test,1531,0,0,0.0
+llm,Mistral7B,Defects4J,Sleepy Test,1531,13,21,0.8491182233834096
+llm,Mistral7B,Defects4J,Eager Test,1531,684,3240,44.67668190725016
+llm,Mistral7B,Defects4J,Lazy Test,1531,858,14595,56.04180274330503
+llm,Mistral7B,Defects4J,Duplicate Assert,1531,269,530,17.57021554539517
+llm,Mistral7B,Defects4J,Unknown Test,1531,120,672,7.838014369693011
+llm,Mistral7B,Defects4J,IgnoredTest,1531,1,1,0.06531678641410843
+llm,Mistral7B,Defects4J,Resource Optimism,1531,2,4,0.13063357282821686
+llm,Mistral7B,Defects4J,Magic Number Test,1531,1423,10286,92.94578706727629
+llm,Mistral7B,Defects4J,Dependent Test,1531,0,0,0.0
+llm,Mistral7B,NEWDATASET,Assertion Roulette,14,2,2,14.285714285714286
+llm,Mistral7B,NEWDATASET,Conditional Test Logic,14,0,0,0.0
+llm,Mistral7B,NEWDATASET,Constructor Initialization,14,0,0,0.0
+llm,Mistral7B,NEWDATASET,Default Test,14,0,0,0.0
+llm,Mistral7B,NEWDATASET,EmptyTest,14,4,24,28.571428571428573
+llm,Mistral7B,NEWDATASET,Exception Catching Throwing,14,1,8,7.142857142857143
+llm,Mistral7B,NEWDATASET,General Fixture,14,1,2,7.142857142857143
+llm,Mistral7B,NEWDATASET,Mystery Guest,14,0,0,0.0
+llm,Mistral7B,NEWDATASET,Print Statement,14,0,0,0.0
+llm,Mistral7B,NEWDATASET,Redundant Assertion,14,0,0,0.0
+llm,Mistral7B,NEWDATASET,Sensitive Equality,14,0,0,0.0
+llm,Mistral7B,NEWDATASET,Verbose Test,14,0,0,0.0
+llm,Mistral7B,NEWDATASET,Sleepy Test,14,0,0,0.0
+llm,Mistral7B,NEWDATASET,Eager Test,14,2,2,14.285714285714286
+llm,Mistral7B,NEWDATASET,Lazy Test,14,1,8,7.142857142857143
+llm,Mistral7B,NEWDATASET,Duplicate Assert,14,0,0,0.0
+llm,Mistral7B,NEWDATASET,Unknown Test,14,6,26,42.857142857142854
+llm,Mistral7B,NEWDATASET,IgnoredTest,14,0,0,0.0
+llm,Mistral7B,NEWDATASET,Resource Optimism,14,0,0,0.0
+llm,Mistral7B,NEWDATASET,Magic Number Test,14,10,46,71.42857142857143
+llm,Mistral7B,NEWDATASET,Dependent Test,14,0,0,0.0
+llm,Mistral7B,SF110,Assertion Roulette,1773,736,1963,41.51156232374507
+llm,Mistral7B,SF110,Conditional Test Logic,1773,80,175,4.512126339537507
+llm,Mistral7B,SF110,Constructor Initialization,1773,1,1,0.05640157924421884
+llm,Mistral7B,SF110,Default Test,1773,0,0,0.0
+llm,Mistral7B,SF110,EmptyTest,1773,138,1188,7.783417935702199
+llm,Mistral7B,SF110,Exception Catching Throwing,1773,185,638,10.434292160180485
+llm,Mistral7B,SF110,General Fixture,1773,39,283,2.1996615905245345
+llm,Mistral7B,SF110,Mystery Guest,1773,4,10,0.22560631697687536
+llm,Mistral7B,SF110,Print Statement,1773,10,12,0.5640157924421884
+llm,Mistral7B,SF110,Redundant Assertion,1773,30,31,1.6920473773265652
+llm,Mistral7B,SF110,Sensitive Equality,1773,248,641,13.987591652566271
+llm,Mistral7B,SF110,Verbose Test,1773,0,0,0.0
+llm,Mistral7B,SF110,Sleepy Test,1773,3,3,0.1692047377326565
+llm,Mistral7B,SF110,Eager Test,1773,783,2686,44.16243654822335
+llm,Mistral7B,SF110,Lazy Test,1773,796,11292,44.895657078398195
+llm,Mistral7B,SF110,Duplicate Assert,1773,137,251,7.727016356457981
+llm,Mistral7B,SF110,Unknown Test,1773,229,1005,12.915961646926114
+llm,Mistral7B,SF110,IgnoredTest,1773,1,1,0.05640157924421884
+llm,Mistral7B,SF110,Resource Optimism,1773,4,11,0.22560631697687536
+llm,Mistral7B,SF110,Magic Number Test,1773,1629,9470,91.87817258883248
+llm,Mistral7B,SF110,Dependent Test,1773,0,0,0.0
+llm,Mixtral8x7b,NEWDATASET,Assertion Roulette,22,7,31,31.818181818181817
+llm,Mixtral8x7b,NEWDATASET,Conditional Test Logic,22,1,1,4.545454545454546
+llm,Mixtral8x7b,NEWDATASET,Constructor Initialization,22,0,0,0.0
+llm,Mixtral8x7b,NEWDATASET,Default Test,22,0,0,0.0
+llm,Mixtral8x7b,NEWDATASET,EmptyTest,22,6,20,27.272727272727273
+llm,Mixtral8x7b,NEWDATASET,Exception Catching Throwing,22,5,31,22.727272727272727
+llm,Mixtral8x7b,NEWDATASET,General Fixture,22,5,46,22.727272727272727
+llm,Mixtral8x7b,NEWDATASET,Mystery Guest,22,0,0,0.0
+llm,Mixtral8x7b,NEWDATASET,Print Statement,22,0,0,0.0
+llm,Mixtral8x7b,NEWDATASET,Redundant Assertion,22,0,0,0.0
+llm,Mixtral8x7b,NEWDATASET,Sensitive Equality,22,1,2,4.545454545454546
+llm,Mixtral8x7b,NEWDATASET,Verbose Test,22,0,0,0.0
+llm,Mixtral8x7b,NEWDATASET,Sleepy Test,22,0,0,0.0
+llm,Mixtral8x7b,NEWDATASET,Eager Test,22,7,22,31.818181818181817
+llm,Mixtral8x7b,NEWDATASET,Lazy Test,22,7,61,31.818181818181817
+llm,Mixtral8x7b,NEWDATASET,Duplicate Assert,22,0,0,0.0
+llm,Mixtral8x7b,NEWDATASET,Unknown Test,22,11,32,50.0
+llm,Mixtral8x7b,NEWDATASET,IgnoredTest,22,0,0,0.0
+llm,Mixtral8x7b,NEWDATASET,Resource Optimism,22,0,0,0.0
+llm,Mixtral8x7b,NEWDATASET,Magic Number Test,22,21,127,95.45454545454545
+llm,Mixtral8x7b,NEWDATASET,Dependent Test,22,0,0,0.0

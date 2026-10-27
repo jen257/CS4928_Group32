@@ -1,0 +1,15 @@
+{
+  "source_population_and_unique_exported_IDs": 30913,
+  "numeric_outputs_matched_to_raw_detector_rows": 30913,
+  "raw_batches_checked": 620,
+  "status_counts": {
+    "SUCCESS": 30638,
+    "SUCCESS_ZERO_METHODS": 275
+  },
+  "group_statistics_checked": 10,
+  "RQ1_expected_records": 14106,
+  "complete": true,
+  "failed_metrics_never_imputed_as_zero": true,
+  "prevalence_condition": "count > 0",
+  "passed": true
+}
