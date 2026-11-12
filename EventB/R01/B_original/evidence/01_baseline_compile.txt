@@ -1,0 +1,2 @@
+"<JDK>/bin/javac.exe" -J-Duser.language=en -J-Duser.country=US --release 8 -proc:none -encoding UTF-8 -cp jars/junit-4.13.2.jar;jars/hamcrest-core-1.3.jar;jars/junit-platform-console-standalone-1.9.3.jar;jars/jsoup-1.8.3.jar -d <build>/base before\production\org\jsoup\parser\TokenQueue.java before\test\org\jsoup\parser\TokenQueueTest.java
+Exit code: 0

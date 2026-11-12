@@ -1,0 +1,15 @@
+{
+  "TokenQueueTest.java": {
+    "added": 12,
+    "deleted": 5,
+    "before_code_LOC": 172,
+    "after_code_LOC": 178
+  },
+  "TokenQueue.java": {
+    "added": 14,
+    "deleted": 4,
+    "before_code_LOC": 213,
+    "after_code_LOC": 220
+  },
+  "production_sha256": "db9533a063a5904d7ba19956a68977781d44aadd32c2af86b7e43068fce38e44"
+}

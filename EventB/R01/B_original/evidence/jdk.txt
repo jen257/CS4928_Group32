@@ -1,0 +1,8 @@
+"<JDK>/bin/java.exe" -version
+Exit code: 0
+openjdk version "17.0.4.1" 2022-08-12
+
+OpenJDK Runtime Environment JBR-17.0.4.1+7-469.62-jcef (build 17.0.4.1+7-b469.62)
+
+OpenJDK 64-Bit Server VM JBR-17.0.4.1+7-469.62-jcef (build 17.0.4.1+7-b469.62, mixed mode)
+
