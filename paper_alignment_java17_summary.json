@@ -1,0 +1,79 @@
+{
+  "paper_sha256": "7d621e8b428bb5cfeca735f1bbc21b866c2182e7ee214eae07de34a0960bd3ae",
+  "paper_table": "Appendix A, Table 17(a), TsDetect, PDF page 45",
+  "RQ1_comparisons": [
+    {
+      "generator_family": "evosuite",
+      "generator_model": "",
+      "dataset": "Defects4J",
+      "smell": "Assertion Roulette",
+      "records": 4346,
+      "successful_outputs": 4346,
+      "paper_percent": 38.24,
+      "java17_percent": 38.242061665899676,
+      "absolute_difference_pp": 0.002061665899674381,
+      "threshold_pp": 15,
+      "exceeds_threshold": false,
+      "paper_location": "Appendix A, Table 17(a), PDF page 45"
+    },
+    {
+      "generator_family": "evosuite",
+      "generator_model": "",
+      "dataset": "Defects4J",
+      "smell": "Lazy Test",
+      "records": 4346,
+      "successful_outputs": 4346,
+      "paper_percent": 82.18,
+      "java17_percent": 76.94431661297745,
+      "absolute_difference_pp": 5.235683387022561,
+      "threshold_pp": 15,
+      "exceeds_threshold": false,
+      "paper_location": "Appendix A, Table 17(a), PDF page 45"
+    },
+    {
+      "generator_family": "llm",
+      "generator_model": "GPT3",
+      "dataset": "Defects4J",
+      "smell": "Assertion Roulette",
+      "records": 9760,
+      "successful_outputs": 9760,
+      "paper_percent": 46.94,
+      "java17_percent": 46.93647540983606,
+      "absolute_difference_pp": 0.003524590163934249,
+      "threshold_pp": 15,
+      "exceeds_threshold": false,
+      "paper_location": "Appendix A, Table 17(a), PDF page 45"
+    },
+    {
+      "generator_family": "llm",
+      "generator_model": "GPT3",
+      "dataset": "Defects4J",
+      "smell": "Lazy Test",
+      "records": 9760,
+      "successful_outputs": 9760,
+      "paper_percent": 48.67,
+      "java17_percent": 48.66803278688525,
+      "absolute_difference_pp": 0.001967213114753008,
+      "threshold_pp": 15,
+      "exceeds_threshold": false,
+      "paper_location": "Appendix A, Table 17(a), PDF page 45"
+    }
+  ],
+  "any_metric_exceeds_frozen_15pp_rule": false,
+  "current_primary_runtime": "jdk-17.0.20+8",
+  "Java_major_matches_paper": true,
+  "paper_exact_Java_patch": "Not specified in the supplied paper; identical patch is not claimed",
+  "paper_python": "3.10",
+  "local_python": "3.12.14 (main, Aug 25 2026, 14:01:42) [MSC v.1944 64 bit (AMD64)]",
+  "remaining_environment_caveat": "Java major version is aligned, but exact Python version, OS/hardware and full environment identity are not claimed.",
+  "population_caveat": {
+    "paper_narrative_LLM": 20505,
+    "paper_narrative_EvoSuite": 14469,
+    "released_LLM": 20505,
+    "released_EvoSuite": 10408,
+    "EvoSuite_difference": 4061,
+    "cause": "Unresolved"
+  },
+  "scope": "GPT-3.5 vs EvoSuite on Defects4J for AR/LT only; other groups are supplementary.",
+  "interpretation": "The Java-17 available-scope result does not trigger the preregistered >15pp non-reproduction rule. Preserve the EvoSuite LT discrepancy and release-population limitation."
+}

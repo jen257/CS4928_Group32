@@ -1,0 +1,3 @@
+﻿generator_family,generator_model,dataset,expected_records,successful_outputs,zero_method_outputs,failed_records,pending_records,coverage_percent,AR_positive,LT_positive,AR_count_sum,LT_count_sum,AR_prevalence_percent,LT_prevalence_percent
+evosuite,,Defects4J,4346,4346,0,0,0,100.0,1662,3344,12795,103511,38.242061665899676,76.94431661297745
+llm,GPT3,Defects4J,9760,9760,13,0,0,100.0,4581,4750,20516,64622,46.93647540983606,48.66803278688525

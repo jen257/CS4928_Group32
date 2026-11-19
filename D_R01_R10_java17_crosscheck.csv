@@ -1,0 +1,11 @@
+﻿sample,id,Java17_AR,D_baseline_AR,Java17_LT,D_baseline_LT,AR_LT_match
+R01,benchmark-1|llm|Defects4J|Jsoup-60|GPT3|ZEROSHOT|NA|3|c91074571f65,23,23,21,21,True
+R02,benchmark-1|llm|Defects4J|Time-2|GPT3|FEWSHOT|NA|8|fa30c5d55706,13,13,34,34,True
+R03,benchmark-1|llm|Defects4J|Jsoup-74|GPT3|FEWSHOT|NA|22|6b681619cacd,13,13,11,11,True
+R04,benchmark-1|llm|Defects4J|Lang-5|GPT3|ZEROSHOT|NA|20|15969c9a6e7f,11,11,11,11,True
+R05,benchmark-1|llm|Defects4J|Mockito-22|GPT3|FEWSHOT|NA|25|0414b669c026,10,10,19,19,True
+R06,benchmark-1|llm|Defects4J|Lang-12|GPT3|TOT|NA|7|792e53f526c3,10,10,12,12,True
+R07,benchmark-1|llm|Defects4J|Collections-26|GPT3|COT|NA|5|7ae0088ec995,9,9,27,27,True
+R08,benchmark-1|llm|Defects4J|Compress-29|GPT3|TOT2|NA|14|edfe3c65d4e8,9,9,9,9,True
+R09,benchmark-1|llm|Defects4J|Csv-2|GPT3|ZEROSHOT|NA|9|c4be5f2868df,8,8,18,18,True
+R10,benchmark-1|llm|Defects4J|Jsoup-8|GPT3|COT|NA|4|b97cfb575876,7,7,30,30,True

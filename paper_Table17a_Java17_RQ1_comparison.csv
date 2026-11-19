@@ -1,0 +1,5 @@
+﻿generator_family,generator_model,dataset,smell,records,successful_outputs,paper_percent,java17_percent,absolute_difference_pp,threshold_pp,exceeds_threshold,paper_location
+evosuite,,Defects4J,Assertion Roulette,4346,4346,38.24,38.242061665899676,0.002061665899674381,15,False,"Appendix A, Table 17(a), PDF page 45"
+evosuite,,Defects4J,Lazy Test,4346,4346,82.18,76.94431661297745,5.235683387022561,15,False,"Appendix A, Table 17(a), PDF page 45"
+llm,GPT3,Defects4J,Assertion Roulette,9760,9760,46.94,46.93647540983606,0.003524590163934249,15,False,"Appendix A, Table 17(a), PDF page 45"
+llm,GPT3,Defects4J,Lazy Test,9760,9760,48.67,48.66803278688525,0.001967213114753008,15,False,"Appendix A, Table 17(a), PDF page 45"

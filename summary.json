@@ -1,0 +1,56 @@
+{
+  "updated_UTC": "2026-10-27T20:07:26.727954+00:00",
+  "expected_records": 30913,
+  "unique_ids": 30913,
+  "successful_outputs": 30913,
+  "failed_records": 0,
+  "pending_records": 0,
+  "zero_method_outputs": 275,
+  "status_counts": {
+    "SUCCESS": 30638,
+    "SUCCESS_ZERO_METHODS": 275
+  },
+  "complete": true,
+  "RQ1": [
+    {
+      "generator_family": "evosuite",
+      "generator_model": "",
+      "dataset": "Defects4J",
+      "expected_records": 4346,
+      "successful_outputs": 4346,
+      "zero_method_outputs": 0,
+      "failed_records": 0,
+      "pending_records": 0,
+      "coverage_percent": 100.0,
+      "AR_positive": 1662,
+      "LT_positive": 3344,
+      "AR_count_sum": 12795,
+      "LT_count_sum": 103511,
+      "AR_prevalence_percent": 38.242061665899676,
+      "LT_prevalence_percent": 76.94431661297745
+    },
+    {
+      "generator_family": "llm",
+      "generator_model": "GPT3",
+      "dataset": "Defects4J",
+      "expected_records": 9760,
+      "successful_outputs": 9760,
+      "zero_method_outputs": 13,
+      "failed_records": 0,
+      "pending_records": 0,
+      "coverage_percent": 100.0,
+      "AR_positive": 4581,
+      "LT_positive": 4750,
+      "AR_count_sum": 20516,
+      "LT_count_sum": 64622,
+      "AR_prevalence_percent": 46.93647540983606,
+      "LT_prevalence_percent": 48.66803278688525
+    }
+  ],
+  "prevalence_rule": "count > 0; denominator = successfully parsed numeric outputs in the same generator/dataset group",
+  "zero_method_rule": "Retained as numeric outputs but explicitly flagged for review; not silently treated as parse failures",
+  "failure_rule": "Missing or invalid output remains ERROR with blank metrics; never replaced with zero",
+  "analysis_unit": "One original Benchmark-1 JSONL record; not unique production class or individual test method",
+  "detector_unchanged": true,
+  "scope": "Static detection only; no compilation/test execution of all 30,913 classes"
+}
