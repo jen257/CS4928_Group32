@@ -1,0 +1,76 @@
+diff --git a/before/production/org/jsoup/parser/TokenQueue.java b/after/production/org/jsoup/parser/TokenQueue.java
+index 269a755..fde5e55 100644
+--- a/before/production/org/jsoup/parser/TokenQueue.java
++++ b/after/production/org/jsoup/parser/TokenQueue.java
+@@ -36,11 +36,21 @@ public class TokenQueue {
+     }
+ 
+     /**
+-     * Retrieves but does not remove the first character from the queue.
+-     * @return First character, or 0 if empty.
++     * Looks ahead without advancing the queue.
++     * @param offset non-negative distance from the current position
++     * @return the character at that offset, or 0 beyond the remaining input
++     * @throws IllegalArgumentException if offset is negative
+      */
+-    public char peek() {
+-        return isEmpty() ? 0 : queue.charAt(pos);
++    public char peek(int offset) {
++        if (offset < 0) {
++            throw new IllegalArgumentException(
++                "offset must be non-negative"
++            );
++        }
++
++        return offset >= remainingLength()
++            ? 0
++            : queue.charAt(pos + offset);
+     }
+ 
+     /**
+diff --git a/before/test/org/jsoup/parser/TokenQueueTest.java b/after/test/org/jsoup/parser/TokenQueueTest.java
+index 4de26f2..6bd9cb0 100644
+--- a/before/test/org/jsoup/parser/TokenQueueTest.java
++++ b/after/test/org/jsoup/parser/TokenQueueTest.java
+@@ -16,10 +16,17 @@ public class TokenQueueTest {
+     @Test
+     public void testPeek() {
+         TokenQueue tq = new TokenQueue("abcdef");
+-        assertEquals('a', tq.peek());
++        assertEquals('a', tq.peek(0));
+ 
+         tq = new TokenQueue("");
+-        assertEquals(0, tq.peek());
++        assertEquals(0, tq.peek(0));
++    }
++
++    @Test
++    public void testPeekAheadDoesNotAdvance() {
++        TokenQueue tq = new TokenQueue("abc");
++        assertEquals("Lookahead should return the next character", 'b', tq.peek(1));
++        assertEquals("Lookahead should preserve the current position", 'a', tq.peek(0));
+     }
+ 
+     @Test
+@@ -95,18 +102,18 @@ public class TokenQueueTest {
+     public void testAdvance() {
+         TokenQueue tq = new TokenQueue("abc");
+         tq.advance();
+-        assertEquals('b', tq.peek());
++        assertEquals('b', tq.peek(0));
+ 
+         tq = new TokenQueue("");
+         tq.advance();
+-        assertEquals(0, tq.peek());
++        assertEquals(0, tq.peek(0));
+     }
+ 
+     @Test
+     public void testConsume() {
+         TokenQueue tq = new TokenQueue("abc");
+         assertEquals('a', tq.consume());
+-        assertEquals('b', tq.peek());
++        assertEquals('b', tq.peek(0));
+     }
+ 
+     @Test
