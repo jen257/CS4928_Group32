@@ -1,0 +1,68 @@
+﻿diff --git a/1_Final_Submission/1_refactored_sources/R01_TokenQueueTest__TokenQueueTest.java "b/EventB\\refactored\\R01_TokenQueueTest/test/org/jsoup/parser/TokenQueueTest.java"
+index 654e42f..6adac16 100644
+--- a/1_Final_Submission/1_refactored_sources/R01_TokenQueueTest__TokenQueueTest.java
++++ "b/EventB\\refactored\\R01_TokenQueueTest/test/org/jsoup/parser/TokenQueueTest.java"
+@@ -16,22 +16,22 @@ public class TokenQueueTest {
+     @Test
+     public void testPeekAdvanceAndConsume() {
+         TokenQueue tq = new TokenQueue("abcdef");
+-        assertEquals("Expected peek() to return first character 'a'", 'a', tq.peek());
++        assertEquals("Expected peek() to return first character 'a'", 'a', tq.peek(0));
+ 
+         tq = new TokenQueue("");
+-        assertEquals("Expected peek() on empty queue to return 0", 0, tq.peek());
++        assertEquals("Expected peek() on empty queue to return 0", 0, tq.peek(0));
+ 
+         tq = new TokenQueue("abc");
+         tq.advance();
+-        assertEquals("Expected peek() after advance() to return 'b'", 'b', tq.peek());
++        assertEquals("Expected peek() after advance() to return 'b'", 'b', tq.peek(0));
+ 
+         tq = new TokenQueue("");
+         tq.advance();
+-        assertEquals("Expected peek() after advance() on empty queue to return 0", 0, tq.peek());
++        assertEquals("Expected peek() after advance() on empty queue to return 0", 0, tq.peek(0));
+ 
+         tq = new TokenQueue("abc");
+         assertEquals("Expected consume() to return first character 'a'", 'a', tq.consume());
+-        assertEquals("Expected peek() after consume() to return 'b'", 'b', tq.peek());
++        assertEquals("Expected peek() after consume() to return 'b'", 'b', tq.peek(0));
+     }
+ 
+     @Test
+@@ -157,4 +157,35 @@ public class TokenQueueTest {
+         String s = TokenQueue.unescape("hello\\\"world\\\"");
+         assertEquals("Expected unescape() to strip backslash escapes from quotes", "hello\"world\"", s);
+     }
++
++    @Test
++public void testPeekWithOffset() {
++    TokenQueue tq = new TokenQueue("abc");
++
++    assertEquals("Offset 0 should return 'a'",
++            'a', tq.peek(0));
++
++    assertEquals("Offset 1 should return 'b'",
++            'b', tq.peek(1));
++
++    assertEquals("Offset 2 should return 'c'",
++            'c', tq.peek(2));
++
++    assertEquals("Out-of-range offset should return 0",
++            '\0', tq.peek(3));
++
++    assertEquals("Peek should not consume characters",
++            'a', tq.peek(0));
++
++    tq.advance();
++
++    assertEquals("Offset 1 after advance should return 'c'",
++            'c', tq.peek(1));
++}
++
++@Test(expected = IllegalArgumentException.class)
++public void testPeekWithNegativeOffset() {
++    TokenQueue tq = new TokenQueue("abc");
++    tq.peek(-1);
++}
+ }

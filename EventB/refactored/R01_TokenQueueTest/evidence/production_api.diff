@@ -1,0 +1,25 @@
+﻿diff --git a/4_Original_Samples/R01_TokenQueueTest/production/org/jsoup/parser/TokenQueue.java "b/EventB\\refactored\\R01_TokenQueueTest/production/org/jsoup/parser/TokenQueue.java"
+index 269a755..ad63a12 100644
+--- a/4_Original_Samples/R01_TokenQueueTest/production/org/jsoup/parser/TokenQueue.java
++++ "b/EventB\\refactored\\R01_TokenQueueTest/production/org/jsoup/parser/TokenQueue.java"
+@@ -39,10 +39,18 @@ public class TokenQueue {
+      * Retrieves but does not remove the first character from the queue.
+      * @return First character, or 0 if empty.
+      */
+-    public char peek() {
+-        return isEmpty() ? 0 : queue.charAt(pos);
++   public char peek(int offset) {
++    if (offset < 0) {
++        throw new IllegalArgumentException(
++            "offset must be non-negative"
++        );
+     }
+ 
++    return offset >= remainingLength()
++        ? 0
++        : queue.charAt(pos + offset);
++}
++
+     /**
+      Add a character to the start of the queue (will be the next character retrieved).
+      @param c character to add
